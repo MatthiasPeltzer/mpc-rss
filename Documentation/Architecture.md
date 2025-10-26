@@ -121,10 +121,10 @@ CREATE TABLE tx_mpcrss_domain_model_feed (
 ### When Would Storage Page Make Sense?
 
 Storage pages are useful when:
-- ✅ You want to **share records** across multiple plugins
-- ✅ Records should be **managed independently** from display
-- ✅ Multiple editors need **centralized record management**
-- ✅ Records have complex relationships (e.g., News with categories, tags, authors)
+- You want to **share records** across multiple plugins
+- Records should be **managed independently** from display
+- Multiple editors need **centralized record management**
+- Records have complex relationships (e.g., News with categories, tags, authors)
 
 **Examples:**
 - News/Blog articles
@@ -135,11 +135,11 @@ Storage pages are useful when:
 ### Why RSS Feeds Don't Need This
 
 RSS feeds in our plugin:
-- ❌ Are **not shared** between plugins (each plugin has its own feeds)
-- ❌ Don't need **independent management** (configured per plugin)
-- ❌ Are **simple records** (just URL + title + source name)
-- ❌ Don't have **complex relationships**
-- ✅ Are **configuration**, not content
+- Are **not shared** between plugins (each plugin has its own feeds)
+- Don't need **independent management** (configured per plugin)
+- Are **simple records** (just URL + title + source name)
+- Don't have **complex relationships**
+- Are **configuration**, not content
 
 ### Analogy
 
@@ -181,11 +181,11 @@ if ($feedCount === 0) {
 The "Record Storage Page" field is **intentionally hidden and disabled** because the MPC RSS extension uses an **inline record architecture** where feeds are configuration data directly attached to the content element, not independent content records stored in folders.
 
 This design provides:
-- ✅ Simpler setup
-- ✅ Better user experience  
-- ✅ More intuitive data model
-- ✅ Better portability
-- ✅ No configuration errors from wrong storage page
+- Simpler setup
+- Better user experience  
+- More intuitive data model
+- Better portability
+- No configuration errors from wrong storage page
 
-**Bottom line:** The storage page concept doesn't apply to this plugin's architecture, so we hide it to avoid confusion! 🎯
+**Bottom line:** The storage page concept doesn't apply to this plugin's architecture, so we hide it to avoid confusion!
 

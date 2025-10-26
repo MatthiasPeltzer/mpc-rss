@@ -19,10 +19,10 @@ Business (5 items)
 ```
 
 **When to use:**
-- ✅ Topic-focused sites (e.g., news portals)
-- ✅ When feeds have consistent RSS `<category>` tags
-- ✅ Users want to browse by subject matter
-- ✅ Multi-source aggregation by topic
+- Topic-focused sites (e.g., news portals)
+- When feeds have consistent RSS `<category>` tags
+- Users want to browse by subject matter
+- Multi-source aggregation by topic
 
 **Pros:**
 - Organizes by subject/topic
@@ -51,10 +51,10 @@ The Guardian (12 items)
 ```
 
 **When to use:**
-- ✅ **News aggregators** - Show distinct sources
-- ✅ **Dashboard** - Quick source scanning
-- ✅ **Multi-source comparison** - Same story from different outlets
-- ✅ **Brand awareness** - Users care about source credibility
+- **News aggregators** - Show distinct sources
+- **Dashboard** - Quick source scanning
+- **Multi-source comparison** - Same story from different outlets
+- **Brand awareness** - Users care about source credibility
 
 **Pros:**
 - Always consistent (source name always available)
@@ -66,7 +66,7 @@ The Guardian (12 items)
 - Can't easily browse by topic
 - Duplicate stories across sources
 
-**Best for:** Most use cases! 🌟
+**Best for:** Most use cases!
 
 ---
 
@@ -86,10 +86,10 @@ This Week (23 items)
 ```
 
 **When to use:**
-- ✅ News monitoring / staying current
-- ✅ Chronological importance matters
-- ✅ Time-sensitive content
-- ✅ Archive/history browsing
+- News monitoring / staying current
+- Chronological importance matters
+- Time-sensitive content
+- Archive/history browsing
 
 **Pros:**
 - Clear temporal organization
@@ -117,10 +117,10 @@ This Week (23 items)
 ```
 
 **When to use:**
-- ✅ **Social media style** - Like Twitter/Mastodon
-- ✅ **Real-time monitoring** - Latest across all sources
-- ✅ **Minimal interface** - Single scrolling feed
-- ✅ **Mobile-first** - Continuous scroll
+- **Social media style** - Like Twitter/Mastodon
+- **Real-time monitoring** - Latest across all sources
+- **Minimal interface** - Single scrolling feed
+- **Mobile-first** - Continuous scroll
 
 **Pros:**
 - Simplest interface
@@ -146,7 +146,7 @@ This Week (23 items)
 | **Best for** | Subject browsing | Multi-source | Archives | Real-time |
 | **Navigation** | By topic | By source | By time | Scroll |
 | **Complexity** | Medium | Low | Low | Lowest |
-| **Mobile-friendly** | ⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐⭐ |
+| **Mobile-friendly** | Good | Good | Fair | Excellent |
 | **Discoverability** | High | High | Medium | Low |
 
 ## Use Case Examples
@@ -266,11 +266,11 @@ Site Management → Settings → MPC RSS Plugin
 ## Conclusion
 
 **For most users, we recommend "Group by Source"** because:
-- ✅ Always consistent
-- ✅ Clear attribution
-- ✅ No fallback complexity
-- ✅ Predictable behavior
-- ✅ Source credibility matters
+- Always consistent
+- Clear attribution
+- No fallback complexity
+- Predictable behavior
+- Source credibility matters
 
 The current "Category" default works but requires good RSS category tags. Consider changing the default to "source" in the next major version for better out-of-the-box experience.
 

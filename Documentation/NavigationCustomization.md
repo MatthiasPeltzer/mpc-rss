@@ -19,9 +19,9 @@ The navigation automatically displays a contextual heading based on the grouping
 
 Each mode gets a distinctive icon badge:
 
-- 🏷️ **Category Mode** - Primary blue badge for topic-based filtering
-- 📰 **Source Mode** - Gray badge for news outlet identification
-- 📅 **Date Mode** - Info blue badge for time-based browsing
+- **Category Mode** - Primary blue badge for topic-based filtering
+- **Source Mode** - Gray badge for news outlet identification
+- **Date Mode** - Info blue badge for time-based browsing
 
 ### 3. **CSS Styling**
 
@@ -86,7 +86,7 @@ Replace the emoji icons with your own in the template (`Resources/Private/Templa
 
 ```html
 <f:case value="source">
-    <span class="badge bg-secondary me-1">🌐</span> <!-- Globe instead of newspaper -->
+    <span class="badge bg-secondary me-1">Globe</span> <!-- Text instead of icon -->
 </f:case>
 ```
 
@@ -157,19 +157,19 @@ The navigation includes ARIA attributes for screen readers:
 ### Category Mode Navigation
 ```
 Filter by Category
-🏷️ Politics  🏷️ Economy  🏷️ Technology  🏷️ Sports
+Politics  Economy  Technology  Sports
 ```
 
 ### Source Mode Navigation
 ```
 Filter by Source
-📰 BBC News  📰 The Guardian  📰 TechCrunch  📰 Reuters
+BBC News  The Guardian  TechCrunch  Reuters
 ```
 
 ### Date Mode Navigation
 ```
 Filter by Date
-📅 Today  📅 Yesterday  📅 This Week  📅 This Month
+Today  Yesterday  This Week  This Month
 ```
 
 ### None Mode

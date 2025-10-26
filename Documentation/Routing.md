@@ -2,19 +2,19 @@
 
 The mpc-rss extension now supports beautiful, SEO-friendly URLs through TYPO3's Route Enhancer system.
 
-## 🎯 URL Examples
+## URL Examples
 
 ### Before (Ugly)
 ```
 /links/rss-feeds?tx_mpcrss_feed%5Baction%5D=list&tx_mpcrss_feed%5Bcontroller%5D=Feed&tx_mpcrss_feed%5BfilterCategory%5D=Ausland&tx_mpcrss_feed%5Bpage%5D=1&cHash=eacffac92cf08081c5e609c2c56270c4
 ```
 
-### After (Beautiful) ✅
+### After (Beautiful)
 ```
 /links/rss-feeds/ausland/page-1
 ```
 
-## 📋 Available URL Patterns
+## Available URL Patterns
 
 ### 1. Main Feed Page
 ```
@@ -44,7 +44,7 @@ Paginated view of all categories.
 ```
 Paginated view of specific category.
 
-## 🗺️ Category Slug Mapping
+## Category Slug Mapping
 
 ### German (Default)
 
@@ -116,7 +116,7 @@ For English pages (`/en/...`), the URLs use English slugs:
 | `/zeit` | ZEIT |
 | `/current-affairs` | Zeitgeschehen |
 
-## 🔧 Configuration
+## Configuration
 
 The route enhancer is configured in:
 ```
@@ -152,7 +152,7 @@ MpcRssFeed:
       end: '100'  # Max 100 pages
 ```
 
-## ➕ Adding New Categories
+## Adding New Categories
 
 If you add new categories in your feeds, update the site configuration:
 
@@ -186,7 +186,7 @@ localeMap:
 vendor/bin/typo3 cache:flush
 ```
 
-## 🌐 Multilanguage Support
+## Multilanguage Support
 
 The route enhancer supports different URL slugs per language:
 
@@ -202,22 +202,22 @@ The route enhancer supports different URL slugs per language:
 
 Both link to the same category "Politik", just with different URL slugs.
 
-## 🎨 SEO Benefits
+## SEO Benefits
 
 ### Before
-- ❌ Long, ugly URLs
-- ❌ Query parameters everywhere
-- ❌ Poor search engine indexing
-- ❌ Hard to share/remember
+- Long, ugly URLs
+- Query parameters everywhere
+- Poor search engine indexing
+- Hard to share/remember
 
 ### After
-- ✅ Clean, readable URLs
-- ✅ SEO-friendly structure
-- ✅ Better search engine indexing
-- ✅ Easy to share and remember
-- ✅ Multilanguage support
+- Clean, readable URLs
+- SEO-friendly structure
+- Better search engine indexing
+- Easy to share and remember
+- Multilanguage support
 
-## 🔍 How It Works
+## How It Works
 
 ### URL Generation
 
@@ -246,7 +246,7 @@ When a user visits `/links/rss-feeds/politik`:
 4. Calls `FeedController::listAction()` with the parameter
 5. Displays Politik category
 
-## 🛠️ Troubleshooting
+## Troubleshooting
 
 ### URLs still ugly after configuration
 
@@ -287,14 +287,14 @@ map:
 
 **Solution:** Add `localeMap` section with `en_.*` locale
 
-## 📊 Performance
+## Performance
 
 Route enhancers do **not** impact performance:
-- ✅ URLs cached by TYPO3
-- ✅ No database queries for URL parsing
-- ✅ Static mapping = instant lookup
+- URLs cached by TYPO3
+- No database queries for URL parsing
+- Static mapping = instant lookup
 
-## 🎯 Best Practices
+## Best Practices
 
 ### 1. Use lowercase slugs
 ```yaml
@@ -328,7 +328,7 @@ technology-and-digital-stuff: Digital
 ### 4. Match your site's language
 If your site is primarily German, use German slugs in the default map.
 
-## 🔗 Example Full URLs
+## Example Full URLs
 
 Based on page slug `/links/rss-feeds`:
 
@@ -350,14 +350,14 @@ https://mpeltzer.ddev.docker/en/links/rss-feeds/politics
 https://mpeltzer.ddev.docker/en/links/rss-feeds/economy
 ```
 
-## 📝 Summary
+## Summary
 
-✅ **Configured:** Route enhancer in site configuration  
-✅ **Supported:** 17 default categories + source names  
-✅ **Multilingual:** German and English slugs  
-✅ **SEO-friendly:** Clean, readable URLs  
-✅ **Pagination:** Works with speaking URLs  
-✅ **Extendable:** Easy to add new categories  
+- **Configured:** Route enhancer in site configuration  
+- **Supported:** 17 default categories + source names  
+- **Multilingual:** German and English slugs  
+- **SEO-friendly:** Clean, readable URLs  
+- **Pagination:** Works with speaking URLs  
+- **Extendable:** Easy to add new categories  
 
 ---
 
