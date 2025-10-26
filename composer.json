@@ -3,7 +3,7 @@
   "description": "TYPO3 extension to fetch and render RSS feeds grouped by category, date or author.",
   "type": "typo3-cms-extension",
   "license": [
-    "GPL-3.0-or-later"
+    "GPL-2.0-or-later"
   ],
   "version": "1.0.0",
   "authors": [
