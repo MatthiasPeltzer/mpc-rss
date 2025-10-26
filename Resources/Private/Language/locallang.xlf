@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="EXT:mpc_rss/Resources/Private/Language/locallang.xlf" date="2025-01-26T12:00:00Z" product-name="mpc_rss">
+        <header/>
+        <body>
+            <!-- General -->
+            <trans-unit id="rss.title">
+                <source>RSS Feed</source>
+            </trans-unit>
+            <trans-unit id="rss.no_feeds">
+                <source>No RSS feeds configured. Please add feeds in the content element.</source>
+            </trans-unit>
+            <trans-unit id="rss.no_items">
+                <source>No items found in the selected feeds.</source>
+            </trans-unit>
+            <trans-unit id="rss.loading">
+                <source>Loading RSS feeds...</source>
+            </trans-unit>
+            <trans-unit id="rss.error">
+                <source>Error loading RSS feeds. Please try again later.</source>
+            </trans-unit>
+
+            <!-- Category Filter -->
+            <trans-unit id="filter.all_categories">
+                <source>All Categories</source>
+            </trans-unit>
+            <trans-unit id="filter.show_category">
+                <source>Show category</source>
+            </trans-unit>
+            <trans-unit id="filter.filter_by">
+                <source>Filter by:</source>
+            </trans-unit>
+
+            <!-- Item Details -->
+            <trans-unit id="item.read_more">
+                <source>Read more</source>
+            </trans-unit>
+            <trans-unit id="item.source">
+                <source>Source</source>
+            </trans-unit>
+            <trans-unit id="item.published">
+                <source>Published</source>
+            </trans-unit>
+            <trans-unit id="item.categories">
+                <source>Categories</source>
+            </trans-unit>
+            <trans-unit id="item.no_description">
+                <source>No description available</source>
+            </trans-unit>
+
+            <!-- Pagination -->
+            <trans-unit id="pagination.page">
+                <source>Page</source>
+            </trans-unit>
+            <trans-unit id="pagination.of">
+                <source>of</source>
+            </trans-unit>
+            <trans-unit id="pagination.previous">
+                <source>Previous</source>
+            </trans-unit>
+            <trans-unit id="pagination.next">
+                <source>Next</source>
+            </trans-unit>
+            <trans-unit id="pagination.first">
+                <source>First</source>
+            </trans-unit>
+            <trans-unit id="pagination.last">
+                <source>Last</source>
+            </trans-unit>
+            <trans-unit id="pagination.items_total">
+                <source>items total</source>
+            </trans-unit>
+
+            <!-- Time/Date -->
+            <trans-unit id="time.just_now">
+                <source>just now</source>
+            </trans-unit>
+            <trans-unit id="time.minutes_ago">
+                <source>%d minutes ago</source>
+            </trans-unit>
+            <trans-unit id="time.hours_ago">
+                <source>%d hours ago</source>
+            </trans-unit>
+            <trans-unit id="time.days_ago">
+                <source>%d days ago</source>
+            </trans-unit>
+            <trans-unit id="time.today">
+                <source>Today</source>
+            </trans-unit>
+            <trans-unit id="time.yesterday">
+                <source>Yesterday</source>
+            </trans-unit>
+            <trans-unit id="navigation.filterByCategory">
+                <source>Filter by Category</source>
+            </trans-unit>
+            <trans-unit id="navigation.filterBySource">
+                <source>Filter by Source</source>
+            </trans-unit>
+            <trans-unit id="navigation.filterByDate">
+                <source>Filter by Date</source>
+            </trans-unit>
+            <trans-unit id="navigation.filter">
+                <source>Filter</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
+

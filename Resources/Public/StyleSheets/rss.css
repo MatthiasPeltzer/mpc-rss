@@ -1,0 +1,82 @@
+.rss-feed .card-img-top {
+    aspect-ratio: 16 / 9;
+    height: auto;
+    object-fit: cover;
+    width: 100%;
+}
+
+/**
+ * Grouping Mode Styles for MPC RSS
+ * Customize navigation appearance based on grouping mode
+ */
+
+/* Base navigation styles */
+.rss-categories[role="navigation"] {
+    margin-bottom: 1.5rem;
+}
+
+.rss-categories h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* Mode-specific styling */
+.rss-categories ul[data-grouping-mode="category"] .nav-link {
+    border-left: 3px solid transparent;
+}
+
+.rss-categories ul[data-grouping-mode="category"] .nav-link.active {
+    border-left-color: #0d6efd;
+}
+
+.rss-categories ul[data-grouping-mode="source"] .nav-link {
+    font-weight: 500;
+}
+
+.rss-categories ul[data-grouping-mode="source"] .nav-link .badge {
+    background-color: #6c757d !important;
+}
+
+.rss-categories ul[data-grouping-mode="date"] .nav-link {
+    min-width: 120px;
+    text-align: center;
+}
+
+.rss-categories ul[data-grouping-mode="date"] .nav-link .badge {
+    background-color: #17a2b8 !important;
+}
+
+/* Responsive adjustments */
+@media (width <= 768px) {
+    .rss-categories ul {
+        gap: 0.5rem !important;
+    }
+
+    .rss-categories .nav-link {
+        font-size: 0.875rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .rss-categories ul[data-grouping-mode="date"] .nav-link {
+        min-width: auto;
+    }
+}
+
+/* Icon badge animations */
+.rss-categories .nav-link .badge {
+    transition: transform 0.2s ease;
+}
+
+.rss-categories .nav-link:hover .badge {
+    transform: scale(1.1);
+}
+
+/* Active state enhancements */
+.rss-categories .nav-link.active {
+    font-weight: 600;
+}
+
+
+

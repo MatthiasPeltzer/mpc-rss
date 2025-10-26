@@ -1,0 +1,14 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  Mpc\MpcRss\:
+    resource: '../Classes/*'
+
+  # Extbase controllers must be public to be resolved by the container
+  Mpc\MpcRss\Controller\:
+    resource: '../Classes/Controller/*'
+    public: true
+
+

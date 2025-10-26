@@ -1,0 +1,25 @@
+plugin.tx_mpcrss {
+  view {
+    templateRootPaths.10 = EXT:mpc_rss/Resources/Private/Templates/
+    partialRootPaths.10 = EXT:mpc_rss/Resources/Private/Partials/
+    layoutRootPaths.10 = EXT:mpc_rss/Resources/Private/Layouts/
+  }
+  settings {
+  }
+  features {
+    requireCHashArgumentForActionArguments = 1
+  }
+}
+
+# Plugin configuration for TYPO3 13.x
+tt_content.list.20.mpcrss_feed =< lib.contentElement
+tt_content.list.20.mpcrss_feed {
+  templateName = Generic
+  20 = EXTBASEPLUGIN
+  20 {
+    extensionName = MpcRss
+    pluginName = Feed
+  }
+}
+
+

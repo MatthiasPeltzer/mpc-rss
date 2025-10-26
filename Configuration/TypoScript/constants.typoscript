@@ -1,0 +1,16 @@
+plugin.tx_mpcrss {
+  settings {
+    # Default settings (can be overridden in backend TCA fields)
+    maxItems = 12
+    cacheLifetime = 1800
+    includeCategories =
+    excludeCategories =
+    showCategoryFilter = 1
+    paginate = 0
+    paginateCategory =
+    itemsPerPage = 10
+    defaultCategory = Politik
+  }
+}
+
+

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" target-language="de" datatype="plaintext" original="EXT:mpc_rss/Resources/Private/Language/locallang_db.xlf" date="2025-01-26T12:00:00Z" product-name="mpc_rss">
+        <header/>
+        <body>
+            <!-- Plugin -->
+            <trans-unit id="plugin.title">
+                <source>MPC RSS Feed</source>
+                <target>MPC RSS Feed</target>
+            </trans-unit>
+            <trans-unit id="plugin.description">
+                <source>Display RSS feeds with category filtering and pagination</source>
+                <target>RSS-Feeds mit Kategoriefilterung und Seitenumbruch anzeigen</target>
+            </trans-unit>
+
+            <!-- Feed Model -->
+            <trans-unit id="tx_mpcrss_domain_model_feed">
+                <source>RSS Feed</source>
+                <target>RSS-Feed</target>
+            </trans-unit>
+            <trans-unit id="tx_mpcrss_domain_model_feed.title">
+                <source>Feed Title</source>
+                <target>Feed-Titel</target>
+            </trans-unit>
+            <trans-unit id="tx_mpcrss_domain_model_feed.feed_url">
+                <source>Feed URL</source>
+                <target>Feed-URL</target>
+            </trans-unit>
+            <trans-unit id="tx_mpcrss_domain_model_feed.feed_url.description">
+                <source>Enter the complete RSS/Atom feed URL (e.g., https://example.com/feed.rss)</source>
+                <target>Geben Sie die vollständige RSS/Atom-Feed-URL ein (z.B. https://example.com/feed.rss)</target>
+            </trans-unit>
+            <trans-unit id="tx_mpcrss_domain_model_feed.source_name">
+                <source>Source Name (Display Label)</source>
+                <target>Quellenname (Anzeigename)</target>
+            </trans-unit>
+            <trans-unit id="tx_mpcrss_domain_model_feed.source_name.description">
+                <source>Optional: Custom label for this source (e.g., "BBC News", "TechCrunch", "My Blog"). Leave empty to auto-detect from URL.</source>
+                <target>Optional: Benutzerdefinierter Name für diese Quelle (z.B. "BBC News", "TechCrunch", "Mein Blog"). Leer lassen für automatische Erkennung aus der URL.</target>
+            </trans-unit>
+            <trans-unit id="tx_mpcrss_domain_model_feed.description">
+                <source>Description</source>
+                <target>Beschreibung</target>
+            </trans-unit>
+            <trans-unit id="tx_mpcrss_domain_model_feed.description.description">
+                <source>Optional internal notes about this feed</source>
+                <target>Optional interne Notizen zu diesem Feed</target>
+            </trans-unit>
+
+            <!-- Content Element Fields -->
+            <trans-unit id="tt_content.tx_mpcrss_feeds">
+                <source>RSS Feeds</source>
+                <target>RSS-Feeds</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_feeds.description">
+                <source>Add RSS/Atom feed URLs. Click "Create new" to add a feed.</source>
+                <target>RSS/Atom-Feed-URLs hinzufügen. Klicken Sie auf "Neu erstellen", um einen Feed hinzuzufügen.</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_default_category">
+                <source>Default Category</source>
+                <target>Standard-Kategorie</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_default_category.description">
+                <source>Which category to display by default (e.g., Politics, Economy)</source>
+                <target>Welche Kategorie standardmäßig angezeigt werden soll (z.B. Politik, Wirtschaft)</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_grouping_mode">
+                <source>Grouping Mode</source>
+                <target>Gruppierungsmodus</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_grouping_mode.description">
+                <source>Choose how to organize feed items: by category (topic), by source (outlet), by date, or as unified timeline</source>
+                <target>Wählen Sie, wie Feed-Einträge organisiert werden: nach Kategorie (Thema), nach Quelle (Medium), nach Datum oder als einheitliche Timeline</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_grouping_mode.category">
+                <source>Category (Group by topic/subject)</source>
+                <target>Kategorie (Gruppierung nach Thema)</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_grouping_mode.source">
+                <source>Source (Group by news outlet/feed)</source>
+                <target>Quelle (Gruppierung nach Medium/Feed)</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_grouping_mode.date">
+                <source>Date (Group by time period)</source>
+                <target>Datum (Gruppierung nach Zeitraum)</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_grouping_mode.none">
+                <source>None (Unified timeline, no grouping)</source>
+                <target>Keine (Einheitliche Timeline, keine Gruppierung)</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_include_categories">
+                <source>Include Categories</source>
+                <target>Kategorien einbeziehen</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_include_categories.description">
+                <source>Comma-separated list of categories to show. Leave empty to show all categories.</source>
+                <target>Kommagetrennte Liste von Kategorien, die angezeigt werden sollen. Leer lassen, um alle Kategorien anzuzeigen.</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_exclude_categories">
+                <source>Exclude Categories</source>
+                <target>Kategorien ausschließen</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_exclude_categories.description">
+                <source>Comma-separated list of categories to hide</source>
+                <target>Kommagetrennte Liste von Kategorien, die ausgeblendet werden sollen</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_max_items">
+                <source>Max Items per Category</source>
+                <target>Max. Einträge pro Kategorie</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_max_items.description">
+                <source>Maximum number of feed items to display per category</source>
+                <target>Maximale Anzahl von Feed-Einträgen, die pro Kategorie angezeigt werden sollen</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_cache_lifetime">
+                <source>Cache Lifetime (seconds)</source>
+                <target>Cache-Lebensdauer (Sekunden)</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_cache_lifetime.description">
+                <source>How long feed data should be cached (default: 1800 seconds = 30 minutes)</source>
+                <target>Wie lange Feed-Daten zwischengespeichert werden sollen (Standard: 1800 Sekunden = 30 Minuten)</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_show_filter">
+                <source>Show Category Filter Navigation</source>
+                <target>Kategorie-Filter-Navigation anzeigen</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_show_filter.description">
+                <source>Display category filter buttons at the top</source>
+                <target>Kategorie-Filter-Schaltflächen oben anzeigen</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_paginate">
+                <source>Enable Pagination</source>
+                <target>Seitenumbruch aktivieren</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_paginate.description">
+                <source>Enable paginated view for single category</source>
+                <target>Seitenumbruch für einzelne Kategorie aktivieren</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_items_per_page">
+                <source>Items per Page</source>
+                <target>Einträge pro Seite</target>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_items_per_page.description">
+                <source>Number of items per page when pagination is enabled</source>
+                <target>Anzahl der Einträge pro Seite bei aktiviertem Seitenumbruch</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
+

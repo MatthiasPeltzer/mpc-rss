@@ -1,0 +1,116 @@
+<f:layout name="Default" />
+
+<f:section name="Main">
+  <div class="rss-feed">
+    <f:if condition="{settings.feedUrls}">
+      <f:then>
+        <f:if condition="{grouped}">
+          <f:then>
+            <f:if condition="{showFilter}">
+              <nav class="rss-categories mb-3" role="navigation" aria-label="{navigationLabel}">
+                <f:comment><!-- Navigation label changes based on grouping mode --></f:comment>
+                <f:if condition="{navigationLabel}">
+                  <h3 class="h6 text-muted mb-2">
+                    <f:switch expression="{groupingMode}">
+                      <f:case value="category"><f:translate key="navigation.filterByCategory" default="Filter by Category" /></f:case>
+                      <f:case value="source"><f:translate key="navigation.filterBySource" default="Filter by Source" /></f:case>
+                      <f:case value="date"><f:translate key="navigation.filterByDate" default="Filter by Date" /></f:case>
+                      <f:defaultCase><f:translate key="navigation.filter" default="Filter" /></f:defaultCase>
+                    </f:switch>
+                  </h3>
+                </f:if>
+                <ul class="nav nav-pills flex-wrap gap-2" data-grouping-mode="{groupingMode}">
+                  <f:for each="{categories}" as="cat">
+                    <li class="nav-item">
+                      <f:link.action class="nav-link {f:if(condition: '{cat} == {activeCategory}', then: 'active')}" action="list" arguments="{filterCategory: cat}" title="{cat}">
+                        {cat}
+                      </f:link.action>
+                    </li>
+                  </f:for>
+                </ul>
+              </nav>
+            </f:if>
+            <f:for each="{grouped}" as="entries" key="category">
+              <section class="rss-category mb-4">
+                <h2 id="cat-{f:format.htmlspecialchars(value: category)}" class="h5 mb-3">{category}</h2>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+                  <f:for each="{entries}" as="entry">
+                    <div class="col">
+                      <div class="card h-100">
+                        <f:if condition="{entry.image}">
+                          <f:then>
+                            <a href="{entry.link}" target="_blank" rel="noopener noreferrer">
+                              <img src="{entry.image}" class="card-img-top" alt="{entry.title}" loading="lazy" />
+                            </a>
+                          </f:then>
+                          <f:else />
+                        </f:if>
+                        <div class="card-body">
+                          <h3 class="card-title h6 mb-2">
+                            <a href="{entry.link}" target="_blank" rel="noopener noreferrer" class="stretched-link text-decoration-none">{entry.title}</a>
+                          </h3>
+                          <div class="card-text small text-body-secondary mb-2">
+                            <f:if condition="{entry.date}">
+                              <time datetime="{entry.date}"><f:format.date date="{entry.date}" format="d.m.Y H:i" /></time>
+                            </f:if>
+                            <f:if condition="{entry.sourceName}">
+                              <span class="ms-2">{entry.sourceName}</span>
+                            </f:if>
+                          </div>
+                          <div class="card-text">
+                            <f:format.stripTags allowedTags="<a>">
+                              <f:format.crop maxCharacters="200" append="…">{entry.description}</f:format.crop>
+                            </f:format.stripTags>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </f:for>
+                </div>
+              </section>
+            </f:for>
+            <f:if condition="{paginate} && {pagination}">
+              <nav class="pagination mt-3" aria-label="RSS pagination">
+                <ul class="pagination">
+                  <f:if condition="{pagination.page} > 1">
+                    <li class="page-item">
+                      <f:link.action class="page-link" action="list" arguments="{page: 1, filterCategory: pagination.activeCategory}">«</f:link.action>
+                    </li>
+                    <li class="page-item">
+                      <f:link.action class="page-link" action="list" arguments="{page: '{pagination.page - 1}', filterCategory: pagination.activeCategory}">‹</f:link.action>
+                    </li>
+                  </f:if>
+                  <f:for each="{pages}" as="p">
+                    <li class="page-item {f:if(condition: '{p} == {pagination.page}', then: 'active')}">
+                      <f:link.action class="page-link" action="list" arguments="{page: p, filterCategory: pagination.activeCategory}">{p}</f:link.action>
+                    </li>
+                  </f:for>
+                  <f:if condition="{pagination.page} < {pagination.numPages}">
+                    <li class="page-item">
+                      <f:link.action class="page-link" action="list" arguments="{page: '{pagination.page + 1}', filterCategory: pagination.activeCategory}">›</f:link.action>
+                    </li>
+                    <li class="page-item">
+                      <f:link.action class="page-link" action="list" arguments="{page: pagination.numPages, filterCategory: pagination.activeCategory}">»</f:link.action>
+                    </li>
+                  </f:if>
+                </ul>
+              </nav>
+            </f:if>
+          </f:then>
+          <f:else>
+            <div class="alert alert-info" role="alert">
+              <f:translate key="LLL:EXT:mpc_rss/Resources/Private/Language/locallang.xlf:rss.no_items">No items found in the selected feeds.</f:translate>
+            </div>
+          </f:else>
+        </f:if>
+      </f:then>
+      <f:else>
+        <div class="alert alert-warning" role="alert">
+          <strong><f:translate key="LLL:EXT:mpc_rss/Resources/Private/Language/locallang.xlf:rss.no_feeds">No RSS feeds configured. Please add feeds in the content element.</f:translate></strong>
+        </div>
+      </f:else>
+    </f:if>
+  </div>
+</f:section>
+
+

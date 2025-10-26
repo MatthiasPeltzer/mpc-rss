@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="EXT:mpc_rss/Resources/Private/Language/locallang_db.xlf" date="2025-01-26T12:00:00Z" product-name="mpc_rss">
+        <header/>
+        <body>
+            <!-- Plugin -->
+            <trans-unit id="plugin.title">
+                <source>MPC RSS Feed</source>
+            </trans-unit>
+            <trans-unit id="plugin.description">
+                <source>Display RSS feeds with category filtering and pagination</source>
+            </trans-unit>
+
+            <!-- Feed Model -->
+            <trans-unit id="tx_mpcrss_domain_model_feed">
+                <source>RSS Feed</source>
+            </trans-unit>
+            <trans-unit id="tx_mpcrss_domain_model_feed.title">
+                <source>Feed Title</source>
+            </trans-unit>
+            <trans-unit id="tx_mpcrss_domain_model_feed.feed_url">
+                <source>Feed URL</source>
+            </trans-unit>
+            <trans-unit id="tx_mpcrss_domain_model_feed.feed_url.description">
+                <source>Enter the complete RSS/Atom feed URL (e.g., https://example.com/feed.rss)</source>
+            </trans-unit>
+            <trans-unit id="tx_mpcrss_domain_model_feed.source_name">
+                <source>Source Name (Display Label)</source>
+            </trans-unit>
+            <trans-unit id="tx_mpcrss_domain_model_feed.source_name.description">
+                <source>Optional: Custom label for this source (e.g., "BBC News", "TechCrunch", "My Blog"). Leave empty to auto-detect from URL.</source>
+            </trans-unit>
+            <trans-unit id="tx_mpcrss_domain_model_feed.description">
+                <source>Description</source>
+            </trans-unit>
+            <trans-unit id="tx_mpcrss_domain_model_feed.description.description">
+                <source>Optional internal notes about this feed</source>
+            </trans-unit>
+
+            <!-- Content Element Fields -->
+            <trans-unit id="tt_content.tx_mpcrss_feeds">
+                <source>RSS Feeds</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_feeds.description">
+                <source>Add RSS/Atom feed URLs. Click "Create new" to add a feed.</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_default_category">
+                <source>Default Category</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_default_category.description">
+                <source>Which category to display by default (e.g., Politics, Economy)</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_grouping_mode">
+                <source>Grouping Mode</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_grouping_mode.description">
+                <source>Choose how to organize feed items: by category (topic), by source (outlet), by date, or as unified timeline</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_grouping_mode.category">
+                <source>Category (Group by topic/subject)</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_grouping_mode.source">
+                <source>Source (Group by news outlet/feed)</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_grouping_mode.date">
+                <source>Date (Group by time period)</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_grouping_mode.none">
+                <source>None (Unified timeline, no grouping)</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_include_categories">
+                <source>Include Categories</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_include_categories.description">
+                <source>Comma-separated list of categories to show. Leave empty to show all categories.</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_exclude_categories">
+                <source>Exclude Categories</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_exclude_categories.description">
+                <source>Comma-separated list of categories to hide</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_max_items">
+                <source>Max Items per Category</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_max_items.description">
+                <source>Maximum number of feed items to display per category</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_cache_lifetime">
+                <source>Cache Lifetime (seconds)</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_cache_lifetime.description">
+                <source>How long feed data should be cached (default: 1800 seconds = 30 minutes)</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_show_filter">
+                <source>Show Category Filter Navigation</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_show_filter.description">
+                <source>Display category filter buttons at the top</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_paginate">
+                <source>Enable Pagination</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_paginate.description">
+                <source>Enable paginated view for single category</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_items_per_page">
+                <source>Items per Page</source>
+            </trans-unit>
+            <trans-unit id="tt_content.tx_mpcrss_items_per_page.description">
+                <source>Number of items per page when pagination is enabled</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
+

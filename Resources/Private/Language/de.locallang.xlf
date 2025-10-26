@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" target-language="de" datatype="plaintext" original="EXT:mpc_rss/Resources/Private/Language/locallang.xlf" date="2025-01-26T12:00:00Z" product-name="mpc_rss">
+        <header/>
+        <body>
+            <!-- General -->
+            <trans-unit id="rss.title">
+                <source>RSS Feed</source>
+                <target>RSS-Feed</target>
+            </trans-unit>
+            <trans-unit id="rss.no_feeds">
+                <source>No RSS feeds configured. Please add feeds in the content element.</source>
+                <target>Keine RSS-Feeds konfiguriert. Bitte fügen Sie Feeds im Inhaltselement hinzu.</target>
+            </trans-unit>
+            <trans-unit id="rss.no_items">
+                <source>No items found in the selected feeds.</source>
+                <target>Keine Einträge in den ausgewählten Feeds gefunden.</target>
+            </trans-unit>
+            <trans-unit id="rss.loading">
+                <source>Loading RSS feeds...</source>
+                <target>RSS-Feeds werden geladen...</target>
+            </trans-unit>
+            <trans-unit id="rss.error">
+                <source>Error loading RSS feeds. Please try again later.</source>
+                <target>Fehler beim Laden der RSS-Feeds. Bitte versuchen Sie es später erneut.</target>
+            </trans-unit>
+
+            <!-- Category Filter -->
+            <trans-unit id="filter.all_categories">
+                <source>All Categories</source>
+                <target>Alle Kategorien</target>
+            </trans-unit>
+            <trans-unit id="filter.show_category">
+                <source>Show category</source>
+                <target>Kategorie anzeigen</target>
+            </trans-unit>
+            <trans-unit id="filter.filter_by">
+                <source>Filter by:</source>
+                <target>Filtern nach:</target>
+            </trans-unit>
+
+            <!-- Item Details -->
+            <trans-unit id="item.read_more">
+                <source>Read more</source>
+                <target>Weiterlesen</target>
+            </trans-unit>
+            <trans-unit id="item.source">
+                <source>Source</source>
+                <target>Quelle</target>
+            </trans-unit>
+            <trans-unit id="item.published">
+                <source>Published</source>
+                <target>Veröffentlicht</target>
+            </trans-unit>
+            <trans-unit id="item.categories">
+                <source>Categories</source>
+                <target>Kategorien</target>
+            </trans-unit>
+            <trans-unit id="item.no_description">
+                <source>No description available</source>
+                <target>Keine Beschreibung verfügbar</target>
+            </trans-unit>
+
+            <!-- Pagination -->
+            <trans-unit id="pagination.page">
+                <source>Page</source>
+                <target>Seite</target>
+            </trans-unit>
+            <trans-unit id="pagination.of">
+                <source>of</source>
+                <target>von</target>
+            </trans-unit>
+            <trans-unit id="pagination.previous">
+                <source>Previous</source>
+                <target>Vorherige</target>
+            </trans-unit>
+            <trans-unit id="pagination.next">
+                <source>Next</source>
+                <target>Nächste</target>
+            </trans-unit>
+            <trans-unit id="pagination.first">
+                <source>First</source>
+                <target>Erste</target>
+            </trans-unit>
+            <trans-unit id="pagination.last">
+                <source>Last</source>
+                <target>Letzte</target>
+            </trans-unit>
+            <trans-unit id="pagination.items_total">
+                <source>items total</source>
+                <target>Einträge insgesamt</target>
+            </trans-unit>
+
+            <!-- Time/Date -->
+            <trans-unit id="time.just_now">
+                <source>just now</source>
+                <target>gerade eben</target>
+            </trans-unit>
+            <trans-unit id="time.minutes_ago">
+                <source>%d minutes ago</source>
+                <target>vor %d Minuten</target>
+            </trans-unit>
+            <trans-unit id="time.hours_ago">
+                <source>%d hours ago</source>
+                <target>vor %d Stunden</target>
+            </trans-unit>
+            <trans-unit id="time.days_ago">
+                <source>%d days ago</source>
+                <target>vor %d Tagen</target>
+            </trans-unit>
+            <trans-unit id="time.today">
+                <source>Today</source>
+                <target>Heute</target>
+            </trans-unit>
+            <trans-unit id="time.yesterday">
+                <source>Yesterday</source>
+                <target>Gestern</target>
+            </trans-unit>
+            <trans-unit id="navigation.filterByCategory">
+                <source>Filter by Category</source>
+                <target>Nach Kategorie filtern</target>
+            </trans-unit>
+            <trans-unit id="navigation.filterBySource">
+                <source>Filter by Source</source>
+                <target>Nach Quelle filtern</target>
+            </trans-unit>
+            <trans-unit id="navigation.filterByDate">
+                <source>Filter by Date</source>
+                <target>Nach Datum filtern</target>
+            </trans-unit>
+            <trans-unit id="navigation.filter">
+                <source>Filter</source>
+                <target>Filter</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
+
