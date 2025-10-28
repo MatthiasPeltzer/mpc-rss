@@ -17,8 +17,6 @@ plugin.tx_mpcrss {
   }
 }
 
-page.includeCSS.mpc_rss = EXT:mpc_rss/Resources/Public/StyleSheets/rss.css
-
 # Plugin configuration for TYPO3 13.x
 tt_content.list.20.mpcrss_feed = USER
 tt_content.list.20.mpcrss_feed {
