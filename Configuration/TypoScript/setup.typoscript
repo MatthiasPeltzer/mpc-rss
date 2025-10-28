@@ -4,8 +4,6 @@ plugin.tx_mpcrss {
     partialRootPaths.10 = EXT:mpc_rss/Resources/Private/Partials/
     layoutRootPaths.10 = EXT:mpc_rss/Resources/Private/Layouts/
   }
-  settings {
-  }
   features {
     requireCHashArgumentForActionArguments = 1
   }
