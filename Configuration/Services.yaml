@@ -11,4 +11,12 @@ services:
     resource: '../Classes/Controller/*'
     public: true
 
+  # Explicitly tag the command for Symfony Console
+  Mpc\MpcRss\Command\UpdateFeedsCommand:
+    tags:
+      - name: 'console.command'
+        command: 'mpcrss:updatefeeds'
+        description: 'Update RSS feeds and refresh cache'
+        schedulable: true
+
 

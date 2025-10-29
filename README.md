@@ -1,99 +1,93 @@
 # MPC RSS Extension
 
-A modern TYPO3 extension for displaying RSS feeds with category filtering and pagination support.
+A modern TYPO3 extension for displaying RSS feeds with automatic updates, category filtering, and pagination.
 
 ## Features
 
-- **Database-driven feed management**: Add RSS feeds directly in content elements via inline records
-- **No XML configuration**: Pure PHP TCA configuration for modern TYPO3 development
-- **Flexible source naming**: Auto-detection or custom source names for feeds
-- **Category filtering**: Include/exclude specific categories
-- **Pagination support**: Navigate through large feed collections
-- **Caching**: Built-in feed caching for improved performance
-- **Multi-feed aggregation**: Combine multiple RSS/Atom feeds in one view
-- **Sortable feeds**: Drag-and-drop ordering of feeds in backend
+- **Database-driven feed management** with inline records
+- **Automatic background updates** via Scheduler or CLI
+- **Isolated caching** - RSS cache independent from page caches
+- **Category filtering** - Include/exclude specific categories
+- **Multiple grouping modes** - By category, source, date, or unified timeline
+- **Pagination support** - Navigate large feed collections
+- **Multi-feed aggregation** - Combine RSS/Atom feeds
 
-## Installation
-
-1. Install via Composer (if available) or copy to `_packages/mpc-rss/`
-2. Activate the extension in the Extension Manager
-3. Run database updates to create the `tx_mpcrss_domain_model_feed` table
-
-## Usage
-
-### Adding the Plugin
-
-1. Create a new content element
-2. Select "Plugin" → "MPC RSS Feed"
-3. Click "Add Feed" to add RSS feed URLs
-4. Configure display options (categories, pagination, etc.)
-
-### Feed Configuration
-
-Each feed can have:
-- **Title**: Descriptive name for the feed
-- **Feed URL**: Full URL to the RSS/Atom feed
-- **Source Name**: Optional custom display label (e.g., "BBC News", "TechCrunch", "My Blog")
-- **Description**: Optional notes about the feed
-
-### Plugin Options
-
-- **RSS Feeds**: Inline records - add as many feeds as needed with the "Add Feed" button
-- **Default category to show**: Which category to display by default
-- **Include categories**: Comma-separated list of categories to show (empty = all)
-- **Exclude categories**: Comma-separated list of categories to hide
-- **Max items per category**: Maximum number of items to display per category
-- **Cache lifetime**: How long to cache feed data (in seconds)
-- **Show category filter navigation**: Enable/disable category filter
-- **Enable pagination**: Enable paginated view for single category
-- **Items per page**: Number of items per page when pagination is enabled
-
-## Architecture
-
-### Database Structure
-
-- `tx_mpcrss_domain_model_feed`: Stores feed configurations (title, URL, source name)
-- Inline records attached to `tt_content` via `tt_content` field
-
-### PHP Classes
-
-- **Domain/Model/Feed.php**: Extbase domain model for feeds
-- **Domain/Repository/FeedRepository.php**: Repository for fetching feeds
-- **Controller/FeedController.php**: Main plugin controller
-- **Service/FeedService.php**: Feed parsing and caching service
-
-### No XML Configuration
-
-This extension uses **pure PHP TCA configuration** instead of FlexForms:
-- TCA configuration in `Configuration/TCA/tx_mpcrss_domain_model_feed.php`
-- Content element configuration in `Configuration/TCA/Overrides/tt_content.php`
-- No FlexForms XML required
-
-## Predefined Feeds
-
-The extension automatically extracts the source name from the feed URL's domain name (e.g., "example.com" becomes "Example"). You can override this by setting a custom Source Name for each feed.
-
-Custom feeds can use custom source names via the "Source Name" field.
-
-## Technical Requirements
+## Requirements
 
 - TYPO3 13.x
 - PHP 8.1+
-- Extbase/Fluid
+
+## Installation
+
+1. Install via Composer or copy to `typo3conf/ext/mpc_rss/`
+2. Activate in Extension Manager
+3. Run database updates
+
+## Quick Start
+
+1. Create content element → Plugin → "MPC RSS Feed"
+2. Add feed URLs with "Add Feed" button
+3. Configure display options
+
+### Feed Configuration
+
+- **Feed URL**: Full RSS/Atom feed URL
+- **Source Name**: Optional display name (auto-detected if empty)
+- **Max items per category**: Limit items shown
+- **Cache lifetime**: How long to cache (seconds)
+
+## Automatic Updates
+
+Keep feeds fresh without manual cache clearing:
+
+### Option 1: Scheduler (Recommended)
+
+```
+System → Scheduler → Add new task
+Class: "Update RSS Feeds"
+Frequency: */30 * * * * (every 30 minutes)
+```
+
+### Option 2: CLI Command
+
+```bash
+vendor/bin/typo3 mpcrss:updatefeeds
+```
+
+**Add to crontab:**
+```bash
+*/30 * * * * cd /path/to/typo3 && vendor/bin/typo3 mpcrss:updatefeeds
+```
+
+**Details:** See [Documentation/AutomaticFeedUpdates.md](Documentation/AutomaticFeedUpdates.md)
 
 ## Caching
 
-Feeds are cached in the TYPO3 caching framework with the cache key `mpc_rss`. Default cache lifetime is 1800 seconds (30 minutes) but can be configured per plugin instance.
+- **Cache lifetime**: Configurable per content element (default: 1800s)
+- **Isolated cache group**: `mpc_rss` - independent from page/system caches
+- **Cache tags**: `mpc_rss`, `mpc_rss_feed` for targeted clearing
+- **Automatic management**: Scheduler/CLI handles updates
+
+**Clear RSS cache only:**
+```bash
+vendor/bin/typo3 cache:flush --group=mpc_rss
+```
 
 ## Template Customization
 
-Templates can be found in:
+Override in your site package:
 - `Resources/Private/Templates/Feed/List.html`
 - `Resources/Private/Layouts/Default.html`
 
-Override these in your site package as needed.
+## Documentation
+
+- [Automatic Feed Updates](Documentation/AutomaticFeedUpdates.md)
+- [Architecture](Documentation/Architecture.md)
+- [Custom Templates](Documentation/CustomTemplates.md)
+- [Grouping Modes](Documentation/GroupingModes.md)
+- [Navigation Customization](Documentation/NavigationCustomization.md)
+- [Routing](Documentation/Routing.md)
 
 ## License
 
 See LICENSE file.
-

@@ -305,7 +305,9 @@ class FeedService
                 // Only cache if we actually found items to avoid persisting empty failures
                 if (!empty($feedItems)) {
                     $feedData = $feedItems;
-                    $this->cache->set($cacheIdentifier, $feedData, [], $cacheLifetime);
+                    // Add cache tags for better cache management
+                    $tags = ['mpc_rss', 'mpc_rss_feed'];
+                    $this->cache->set($cacheIdentifier, $feedData, $tags, $cacheLifetime);
                 } else {
                     // Skip caching empty results to allow retry on next request
                     $feedData = [];

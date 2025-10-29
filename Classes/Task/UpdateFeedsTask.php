@@ -1,0 +1,135 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Mpc\MpcRss\Task;
+
+use Mpc\MpcRss\Service\FeedService;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Scheduler\Task\AbstractTask;
+
+/**
+ * Scheduler Task to automatically update RSS feeds
+ * 
+ * This task can be configured in the TYPO3 Scheduler module to run at regular intervals.
+ * It fetches all configured RSS feeds and updates the cache, ensuring visitors always
+ * see fresh content without waiting for feed fetching.
+ */
+class UpdateFeedsTask extends AbstractTask
+{
+    /**
+     * Cache lifetime in seconds (default: 600 = 10 minutes)
+     */
+    public int $cacheLifetime = 60;
+
+    /**
+     * Whether to clear the cache before updating
+     */
+    public bool $clearCache = false;
+
+    /**
+     * Execute the task
+     * 
+     * @return bool Returns true on successful execution, false on error
+     */
+    public function execute(): bool
+    {
+        try {
+            $feedService = GeneralUtility::makeInstance(FeedService::class);
+            $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+
+            // Clear cache if requested
+            if ($this->clearCache) {
+                $cacheManager = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Cache\CacheManager::class);
+                $cache = $cacheManager->getCache('mpc_rss');
+                $cache->flush();
+            }
+
+            // Fetch all feed URLs from the database
+            $queryBuilder = $connectionPool->getQueryBuilderForTable('tx_mpcrss_domain_model_feed');
+            $feedRecords = $queryBuilder
+                ->select('feed_url', 'source_name')
+                ->from('tx_mpcrss_domain_model_feed')
+                ->where(
+                    $queryBuilder->expr()->eq('hidden', 0),
+                    $queryBuilder->expr()->eq('deleted', 0),
+                    $queryBuilder->expr()->neq('feed_url', $queryBuilder->createNamedParameter(''))
+                )
+                ->groupBy('feed_url')
+                ->executeQuery()
+                ->fetchAllAssociative();
+
+            if (empty($feedRecords)) {
+                // No feeds configured, but this is not an error
+                return true;
+            }
+
+            $urls = [];
+            $sourceNames = [];
+            foreach ($feedRecords as $record) {
+                $url = $record['feed_url'];
+                $urls[] = $url;
+                if (!empty($record['source_name'])) {
+                    $sourceNames[$url] = $record['source_name'];
+                }
+            }
+
+            // Update each feed
+            foreach ($urls as $url) {
+                try {
+                    // Fetch the feed and update cache
+                    // Use maxItems=0 to fetch all items during background update
+                    $feedService->fetchGroupedByCategory(
+                        [$url],
+                        maxItems: 0, // Fetch all items
+                        cacheLifetime: $this->cacheLifetime,
+                        includeCategories: [],
+                        excludeCategories: [],
+                        sourceNames: $sourceNames,
+                        groupingMode: 'category'
+                    );
+                } catch (\Throwable $e) {
+                    // Log error but continue with other feeds
+                    $this->logException($e);
+                }
+            }
+
+            return true;
+        } catch (\Throwable $e) {
+            // Log the exception
+            $this->logException($e);
+            return false;
+        }
+    }
+
+    /**
+     * Log an exception
+     */
+    private function logException(\Throwable $e): void
+    {
+        $logger = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)
+            ->getLogger(__CLASS__);
+        $logger->error(
+            'RSS feed update failed: ' . $e->getMessage(),
+            [
+                'exception' => $e,
+            ]
+        );
+    }
+
+    /**
+     * Get additional information for the task list
+     *
+     * @return string Information to display
+     */
+    public function getAdditionalInformation(): string
+    {
+        $info = [];
+        $info[] = sprintf('Cache Lifetime: %d seconds', $this->cacheLifetime);
+        $info[] = sprintf('Clear Cache: %s', $this->clearCache ? 'Yes' : 'No');
+
+        return implode(', ', $info);
+    }
+}
+
