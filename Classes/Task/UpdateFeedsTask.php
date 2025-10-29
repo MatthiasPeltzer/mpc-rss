@@ -19,9 +19,9 @@ use TYPO3\CMS\Scheduler\Task\AbstractTask;
 class UpdateFeedsTask extends AbstractTask
 {
     /**
-     * Cache lifetime in seconds (default: 600 = 10 minutes)
+     * Cache lifetime in seconds (default: 3600 = 1 hour)
      */
-    public int $cacheLifetime = 60;
+    public int $cacheLifetime = 3600;
 
     /**
      * Whether to clear the cache before updating
@@ -97,25 +97,10 @@ class UpdateFeedsTask extends AbstractTask
 
             return true;
         } catch (\Throwable $e) {
-            // Log the exception
+            // Log the exception using parent class method
             $this->logException($e);
             return false;
         }
-    }
-
-    /**
-     * Log an exception
-     */
-    private function logException(\Throwable $e): void
-    {
-        $logger = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)
-            ->getLogger(__CLASS__);
-        $logger->error(
-            'RSS feed update failed: ' . $e->getMessage(),
-            [
-                'exception' => $e,
-            ]
-        );
     }
 
     /**
