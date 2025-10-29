@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mpc\MpcRss\Command;
 
+use Doctrine\DBAL\ParameterType;
 use Mpc\MpcRss\Service\FeedService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -75,8 +76,8 @@ class UpdateFeedsCommand extends Command
             ->select('feed_url', 'source_name')
             ->from('tx_mpcrss_domain_model_feed')
             ->where(
-                $queryBuilder->expr()->eq('hidden', 0),
-                $queryBuilder->expr()->eq('deleted', 0),
+                $queryBuilder->expr()->eq('hidden', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
+                $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
                 $queryBuilder->expr()->neq('feed_url', $queryBuilder->createNamedParameter(''))
             )
             ->groupBy('feed_url')

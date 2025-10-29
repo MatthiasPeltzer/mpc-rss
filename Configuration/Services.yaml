@@ -11,6 +11,10 @@ services:
     resource: '../Classes/Controller/*'
     public: true
 
+  # FeedService must be public for Scheduler Tasks to resolve dependencies
+  Mpc\MpcRss\Service\FeedService:
+    public: true
+
   # Explicitly tag the command for Symfony Console
   Mpc\MpcRss\Command\UpdateFeedsCommand:
     tags:
