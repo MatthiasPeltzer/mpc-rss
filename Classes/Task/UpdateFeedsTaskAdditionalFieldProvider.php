@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Mpc\MpcRss\Task;
 
-use TYPO3\CMS\Core\Localization\LanguageService;
-use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Scheduler\AbstractAdditionalFieldProvider;
 use TYPO3\CMS\Scheduler\Controller\SchedulerModuleController;
 use TYPO3\CMS\Scheduler\Task\AbstractTask;
@@ -34,7 +32,7 @@ class UpdateFeedsTaskAdditionalFieldProvider extends AbstractAdditionalFieldProv
             if ($task instanceof UpdateFeedsTask) {
                 $taskInfo['cacheLifetime'] = $task->cacheLifetime;
             } else {
-                $taskInfo['cacheLifetime'] = 60;
+                $taskInfo['cacheLifetime'] = 3600;
             }
         }
 
@@ -78,19 +76,13 @@ class UpdateFeedsTaskAdditionalFieldProvider extends AbstractAdditionalFieldProv
      */
     public function validateAdditionalFields(array &$submittedData, SchedulerModuleController $schedulerModule): bool
     {
-        $isValid = true;
-
-        // Validate cache lifetime
+        // Validate cache lifetime - just ensure it's not negative
         $cacheLifetime = (int)($submittedData['cacheLifetime'] ?? 0);
         if ($cacheLifetime < 0) {
-            $isValid = false;
-            $this->addMessage(
-                'Cache lifetime must be a positive number or zero.',
-                FlashMessage::ERROR
-            );
+            return false;
         }
 
-        return $isValid;
+        return true;
     }
 
     /**
@@ -102,17 +94,9 @@ class UpdateFeedsTaskAdditionalFieldProvider extends AbstractAdditionalFieldProv
     public function saveAdditionalFields(array $submittedData, AbstractTask $task): void
     {
         if ($task instanceof UpdateFeedsTask) {
-            $task->cacheLifetime = (int)($submittedData['cacheLifetime'] ?? 600);
+            $task->cacheLifetime = (int)($submittedData['cacheLifetime'] ?? 3600);
             $task->clearCache = !empty($submittedData['clearCache']);
         }
-    }
-
-    /**
-     * Get the language service
-     */
-    protected function getLanguageService(): LanguageService
-    {
-        return $GLOBALS['LANG'];
     }
 }
 
