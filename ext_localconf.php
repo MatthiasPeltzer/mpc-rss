@@ -10,7 +10,7 @@ call_user_func(static function (): void {
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$cacheKey] ??= [];
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$cacheKey]['frontend'] ??= \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend::class;
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$cacheKey]['backend'] ??= \TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend::class;
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$cacheKey]['groups'] ??= ['system'];
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$cacheKey]['groups'] ??= ['mpc_rss']; // Custom group for isolated cache management
 
     ExtensionUtility::configurePlugin(
         extensionName: 'MpcRss',
@@ -36,6 +36,14 @@ call_user_func(static function (): void {
         \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
         ['source' => 'EXT:mpc_rss/Resources/Public/Icons/Feed.svg']
     );
+
+    // Register Scheduler Task for automatic RSS feed updates
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][\Mpc\MpcRss\Task\UpdateFeedsTask::class] = [
+        'extension' => 'mpc_rss',
+        'title' => 'Update RSS Feeds',
+        'description' => 'Automatically fetch and update RSS feeds in the cache. This ensures visitors always see fresh content.',
+        'additionalFields' => \Mpc\MpcRss\Task\UpdateFeedsTaskAdditionalFieldProvider::class,
+    ];
 });
 
 

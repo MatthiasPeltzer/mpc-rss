@@ -56,7 +56,7 @@ settings:
     tx_mpcrss:
       settings:
         maxItems: 15
-        cacheLifetime: 3600
+        cacheLifetime: 600
         defaultCategory: 'News'
 ```
 
