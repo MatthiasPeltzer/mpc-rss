@@ -10,7 +10,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class FeedService
 {
-    private \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend $cache;
+    private readonly \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend $cache;
 
     public function __construct(CacheManager $cacheManager, private readonly RequestFactory $requestFactory)
     {
@@ -114,6 +114,8 @@ class FeedService
 
     /**
      * Detect source name from URL or return default
+     * 
+     * @param array<string, string> $sourceNames
      */
     private function detectSourceName(string $url, array $sourceNames): string
     {
@@ -443,19 +445,14 @@ class FeedService
         $now = time();
         $daysDiff = (int)floor(($now - $timestamp) / 86400);
         
-        if ($daysDiff === 0) {
-            return 'Heute';
-        } elseif ($daysDiff === 1) {
-            return 'Gestern';
-        } elseif ($daysDiff <= 7) {
-            return 'Diese Woche';
-        } elseif ($daysDiff <= 30) {
-            return 'Diesen Monat';
-        } elseif ($daysDiff <= 90) {
-            return 'Letzte 3 Monate';
-        } else {
-            return 'Älter';
-        }
+        return match (true) {
+            $daysDiff === 0 => 'Heute',
+            $daysDiff === 1 => 'Gestern',
+            $daysDiff <= 7 => 'Diese Woche',
+            $daysDiff <= 30 => 'Diesen Monat',
+            $daysDiff <= 90 => 'Letzte 3 Monate',
+            default => 'Älter',
+        };
     }
 }
 

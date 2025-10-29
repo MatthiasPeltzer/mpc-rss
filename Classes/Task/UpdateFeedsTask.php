@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mpc\MpcRss\Task;
 
+use Doctrine\DBAL\ParameterType;
 use Mpc\MpcRss\Service\FeedService;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -52,8 +53,8 @@ class UpdateFeedsTask extends AbstractTask
                 ->select('feed_url', 'source_name')
                 ->from('tx_mpcrss_domain_model_feed')
                 ->where(
-                    $queryBuilder->expr()->eq('hidden', 0),
-                    $queryBuilder->expr()->eq('deleted', 0),
+                    $queryBuilder->expr()->eq('hidden', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
+                    $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
                     $queryBuilder->expr()->neq('feed_url', $queryBuilder->createNamedParameter(''))
                 )
                 ->groupBy('feed_url')
@@ -91,14 +92,26 @@ class UpdateFeedsTask extends AbstractTask
                     );
                 } catch (\Throwable $e) {
                     // Log error but continue with other feeds
-                    $this->logException($e);
+                    // logException only accepts Exception, not Error types
+                    if ($e instanceof \Exception) {
+                        $this->logException($e);
+                    } else {
+                        // Wrap Error types in Exception for logging
+                        $this->logException(new \Exception($e->getMessage(), (int)$e->getCode(), $e));
+                    }
                 }
             }
 
             return true;
         } catch (\Throwable $e) {
             // Log the exception using parent class method
-            $this->logException($e);
+            // logException only accepts Exception, not Error types
+            if ($e instanceof \Exception) {
+                $this->logException($e);
+            } else {
+                // Wrap Error types in Exception for logging
+                $this->logException(new \Exception($e->getMessage(), (int)$e->getCode(), $e));
+            }
             return false;
         }
     }
