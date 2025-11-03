@@ -1,5 +1,9 @@
 <?php
 
+defined('TYPO3') or die();
+
+$_EXTKEY = 'mpc_rss';
+
 $EM_CONF[$_EXTKEY] = [
     'title' => 'MPC RSS',
     'description' => 'Fetch and render RSS feeds grouped by category',
@@ -10,9 +14,9 @@ $EM_CONF[$_EXTKEY] = [
     'version' => '1.0.0',
     'constraints' => [
         'depends' => [
-            'typo3' => '13.4.0-13.9.99',
-            'fluid' => '13.4.0-13.9.99',
-            'extbase' => '13.4.0-13.9.99',
+            'typo3' => '13.4.0-14.99.99',
+            'fluid' => '13.4.0-14.99.99',
+            'extbase' => '13.4.0-14.99.99',
         ],
         'conflicts' => [],
         'suggests' => [],
