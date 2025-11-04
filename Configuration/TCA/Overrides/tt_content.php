@@ -1,5 +1,7 @@
 <?php
 
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+
 defined('TYPO3') or die();
 
 call_user_func(static function (): void {
@@ -154,9 +156,9 @@ call_user_func(static function (): void {
         ],
     ];
 
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('tt_content', $tempColumns);
+    ExtensionManagementUtility::addTCAcolumns('tt_content', $tempColumns);
 
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin(
+    ExtensionManagementUtility::addPlugin(
         [
             'label' => 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_db.xlf:plugin.title',
             'value' => 'mpcrss_feed',
