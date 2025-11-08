@@ -48,8 +48,8 @@ call_user_func(static function (): void {
     // Register Scheduler Task for automatic RSS feed updates
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][UpdateFeedsTask::class] = [
         'extension' => 'mpc_rss',
-        'title' => 'Update RSS Feeds',
-        'description' => 'Automatically fetch and update RSS feeds in the cache. This ensures visitors always see fresh content.',
+        'title' => 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang.xlf:scheduler.task.title',
+        'description' => 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang.xlf:scheduler.task.description',
         'additionalFields' => UpdateFeedsTaskAdditionalFieldProvider::class,
     ];
 });

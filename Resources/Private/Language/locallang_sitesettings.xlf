@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="messages" date="2025-01-08T12:00:00Z" product-name="mpc_rss">
+        <header/>
+        <body>
+            <!-- Categories -->
+            <trans-unit id="mpcRss.label">
+                <source>MPC RSS Plugin</source>
+            </trans-unit>
+            <trans-unit id="mpcRss.description">
+                <source>Configure default settings for RSS feed display</source>
+            </trans-unit>
+            <trans-unit id="mpcRssView.label">
+                <source>MPC RSS View Paths</source>
+            </trans-unit>
+            <trans-unit id="mpcRssView.description">
+                <source>Configure template, partial and layout paths for custom styling</source>
+            </trans-unit>
+            
+            <!-- View Paths -->
+            <trans-unit id="plugin.tx_mpcrss.view.templateRootPath.label">
+                <source>Template Root Path</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.view.templateRootPath.description">
+                <source>Path to custom templates (e.g., EXT:your_ext/Resources/Private/Templates/)</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.view.partialRootPath.label">
+                <source>Partial Root Path</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.view.partialRootPath.description">
+                <source>Path to custom partials (e.g., EXT:your_ext/Resources/Private/Partials/)</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.view.layoutRootPath.label">
+                <source>Layout Root Path</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.view.layoutRootPath.description">
+                <source>Path to custom layouts (e.g., EXT:your_ext/Resources/Private/Layouts/)</source>
+            </trans-unit>
+            
+            <!-- Settings -->
+            <trans-unit id="plugin.tx_mpcrss.settings.maxItems.label">
+                <source>Max Items per Feed</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.settings.maxItems.description">
+                <source>Maximum number of items to display from each feed</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.settings.cacheLifetime.label">
+                <source>Cache Lifetime (seconds)</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.settings.cacheLifetime.description">
+                <source>How long to cache feed data in seconds (default: 1800 = 30 minutes)</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.settings.includeCategories.label">
+                <source>Include Categories</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.settings.includeCategories.description">
+                <source>Comma-separated list of categories to include (leave empty for all)</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.settings.excludeCategories.label">
+                <source>Exclude Categories</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.settings.excludeCategories.description">
+                <source>Comma-separated list of categories to exclude</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.settings.showCategoryFilter.label">
+                <source>Show Category Filter</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.settings.showCategoryFilter.description">
+                <source>Display category navigation in frontend</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.settings.paginate.label">
+                <source>Enable Pagination</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.settings.paginate.description">
+                <source>Paginate items within a category</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.settings.itemsPerPage.label">
+                <source>Items per Page</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.settings.itemsPerPage.description">
+                <source>Number of items per page when pagination is enabled</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.settings.defaultCategory.label">
+                <source>Default Category</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.settings.defaultCategory.description">
+                <source>Which category to show by default (e.g., Politik, News, etc.)</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.settings.groupingMode.label">
+                <source>Grouping Mode</source>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.settings.groupingMode.description">
+                <source>How to organize feed items: category, source, date, or none (unified timeline)</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
+

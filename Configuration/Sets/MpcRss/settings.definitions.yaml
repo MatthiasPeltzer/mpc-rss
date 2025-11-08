@@ -1,92 +1,92 @@
 # Site Settings Definitions for MPC RSS
 categories:
   mpcRss:
-    label: 'MPC RSS Plugin'
-    description: 'Configure default settings for RSS feed display'
+    label: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:mpcRss.label'
+    description: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:mpcRss.description'
   mpcRssView:
-    label: 'MPC RSS View Paths'
-    description: 'Configure template, partial and layout paths for custom styling'
+    label: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:mpcRssView.label'
+    description: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:mpcRssView.description'
 
 settings:
   plugin.tx_mpcrss.view.templateRootPath:
-    label: 'Template Root Path'
-    description: 'Path to custom templates (e.g., EXT:your_ext/Resources/Private/Templates/)'
+    label: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.view.templateRootPath.label'
+    description: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.view.templateRootPath.description'
     type: string
     default: 'EXT:mpc_rss/Resources/Private/Templates/'
     category: mpcRssView
 
   plugin.tx_mpcrss.view.partialRootPath:
-    label: 'Partial Root Path'
-    description: 'Path to custom partials (e.g., EXT:your_ext/Resources/Private/Partials/)'
+    label: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.view.partialRootPath.label'
+    description: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.view.partialRootPath.description'
     type: string
     default: 'EXT:mpc_rss/Resources/Private/Partials/'
     category: mpcRssView
 
   plugin.tx_mpcrss.view.layoutRootPath:
-    label: 'Layout Root Path'
-    description: 'Path to custom layouts (e.g., EXT:your_ext/Resources/Private/Layouts/)'
+    label: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.view.layoutRootPath.label'
+    description: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.view.layoutRootPath.description'
     type: string
     default: 'EXT:mpc_rss/Resources/Private/Layouts/'
     category: mpcRssView
   plugin.tx_mpcrss.settings.maxItems:
-    label: 'Max Items per Feed'
-    description: 'Maximum number of items to display from each feed'
+    label: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.maxItems.label'
+    description: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.maxItems.description'
     type: int
     default: 9
     category: mpcRss
 
   plugin.tx_mpcrss.settings.cacheLifetime:
-    label: 'Cache Lifetime (seconds)'
-    description: 'How long to cache feed data in seconds (default: 1800 = 30 minutes)'
+    label: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.cacheLifetime.label'
+    description: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.cacheLifetime.description'
     type: int
     default: 1800
     category: mpcRss
 
   plugin.tx_mpcrss.settings.includeCategories:
-    label: 'Include Categories'
-    description: 'Comma-separated list of categories to include (leave empty for all)'
+    label: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.includeCategories.label'
+    description: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.includeCategories.description'
     type: string
     default: ''
     category: mpcRss
 
   plugin.tx_mpcrss.settings.excludeCategories:
-    label: 'Exclude Categories'
-    description: 'Comma-separated list of categories to exclude'
+    label: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.excludeCategories.label'
+    description: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.excludeCategories.description'
     type: string
     default: ''
     category: mpcRss
 
   plugin.tx_mpcrss.settings.showCategoryFilter:
-    label: 'Show Category Filter'
-    description: 'Display category navigation in frontend'
+    label: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.showCategoryFilter.label'
+    description: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.showCategoryFilter.description'
     type: bool
     default: true
     category: mpcRss
 
   plugin.tx_mpcrss.settings.paginate:
-    label: 'Enable Pagination'
-    description: 'Paginate items within a category'
+    label: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.paginate.label'
+    description: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.paginate.description'
     type: bool
     default: false
     category: mpcRss
 
   plugin.tx_mpcrss.settings.itemsPerPage:
-    label: 'Items per Page'
-    description: 'Number of items per page when pagination is enabled'
+    label: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.itemsPerPage.label'
+    description: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.itemsPerPage.description'
     type: int
     default: 10
     category: mpcRss
 
   plugin.tx_mpcrss.settings.defaultCategory:
-    label: 'Default Category'
-    description: 'Which category to show by default (e.g., Politik, News, etc.)'
+    label: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.defaultCategory.label'
+    description: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.defaultCategory.description'
     type: string
     default: 'Politik'
     category: mpcRss
 
   plugin.tx_mpcrss.settings.groupingMode:
-    label: 'Grouping Mode'
-    description: 'How to organize feed items: category, source, date, or none (unified timeline)'
+    label: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.groupingMode.label'
+    description: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.groupingMode.description'
     type: string
     default: 'category'
     category: mpcRss
