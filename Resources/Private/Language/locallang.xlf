@@ -102,6 +102,34 @@
             <trans-unit id="navigation.filter">
                 <source>Filter</source>
             </trans-unit>
+            
+            <!-- Scheduler Task -->
+            <trans-unit id="scheduler.task.title">
+                <source>Update RSS Feeds</source>
+            </trans-unit>
+            <trans-unit id="scheduler.task.description">
+                <source>Automatically fetch and update RSS feeds in the cache. This ensures visitors always see fresh content.</source>
+            </trans-unit>
+            <trans-unit id="scheduler.field.cacheLifetime">
+                <source>Cache Lifetime (seconds)</source>
+            </trans-unit>
+            <trans-unit id="scheduler.field.clearCache">
+                <source>Clear cache before updating</source>
+            </trans-unit>
+            
+            <!-- CLI Command -->
+            <trans-unit id="command.description">
+                <source>Update RSS feeds and refresh cache</source>
+            </trans-unit>
+            <trans-unit id="command.help">
+                <source>Fetches all configured RSS feeds from the database and updates the cache. This ensures visitors always see fresh content without waiting for feed fetching.</source>
+            </trans-unit>
+            <trans-unit id="command.option.clearCache">
+                <source>Clear all RSS feed caches before updating</source>
+            </trans-unit>
+            <trans-unit id="command.option.cacheLifetime">
+                <source>Cache lifetime in seconds (default: 600)</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

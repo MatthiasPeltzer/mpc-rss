@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mpc\MpcRss\Task;
 
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Scheduler\AbstractAdditionalFieldProvider;
 use TYPO3\CMS\Scheduler\Controller\SchedulerModuleController;
 use TYPO3\CMS\Scheduler\Task\AbstractTask;
@@ -40,7 +41,7 @@ class UpdateFeedsTaskAdditionalFieldProvider extends AbstractAdditionalFieldProv
         $fieldCode = '<input type="number" class="form-control" name="tx_scheduler[cacheLifetime]" id="' . $fieldId . '" value="' . htmlspecialchars((string)$taskInfo['cacheLifetime']) . '" min="0" step="60" />';
         $additionalFields[$fieldId] = [
             'code' => $fieldCode,
-            'label' => 'Cache Lifetime (seconds)',
+            'label' => LocalizationUtility::translate('scheduler.field.cacheLifetime', 'mpc_rss') ?? 'Cache Lifetime (seconds)',
             'cshKey' => '',
             'cshLabel' => $fieldId,
         ];
@@ -59,7 +60,7 @@ class UpdateFeedsTaskAdditionalFieldProvider extends AbstractAdditionalFieldProv
         $fieldCode = '<input type="checkbox" class="form-check-input" name="tx_scheduler[clearCache]" id="' . $fieldId . '" value="1"' . $checked . ' />';
         $additionalFields[$fieldId] = [
             'code' => $fieldCode,
-            'label' => 'Clear cache before updating',
+            'label' => LocalizationUtility::translate('scheduler.field.clearCache', 'mpc_rss') ?? 'Clear cache before updating',
             'cshKey' => '',
             'cshLabel' => $fieldId,
         ];

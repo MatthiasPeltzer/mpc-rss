@@ -132,6 +132,42 @@
                 <source>Filter</source>
                 <target>Filter</target>
             </trans-unit>
+            
+            <!-- Scheduler Task -->
+            <trans-unit id="scheduler.task.title">
+                <source>Update RSS Feeds</source>
+                <target>RSS-Feeds aktualisieren</target>
+            </trans-unit>
+            <trans-unit id="scheduler.task.description">
+                <source>Automatically fetch and update RSS feeds in the cache. This ensures visitors always see fresh content.</source>
+                <target>RSS-Feeds automatisch abrufen und im Cache aktualisieren. Dies stellt sicher, dass Besucher immer aktuelle Inhalte sehen.</target>
+            </trans-unit>
+            <trans-unit id="scheduler.field.cacheLifetime">
+                <source>Cache Lifetime (seconds)</source>
+                <target>Cache-Lebensdauer (Sekunden)</target>
+            </trans-unit>
+            <trans-unit id="scheduler.field.clearCache">
+                <source>Clear cache before updating</source>
+                <target>Cache vor Aktualisierung leeren</target>
+            </trans-unit>
+            
+            <!-- CLI Command -->
+            <trans-unit id="command.description">
+                <source>Update RSS feeds and refresh cache</source>
+                <target>RSS-Feeds aktualisieren und Cache erneuern</target>
+            </trans-unit>
+            <trans-unit id="command.help">
+                <source>Fetches all configured RSS feeds from the database and updates the cache. This ensures visitors always see fresh content without waiting for feed fetching.</source>
+                <target>Ruft alle konfigurierten RSS-Feeds aus der Datenbank ab und aktualisiert den Cache. Dies stellt sicher, dass Besucher immer aktuelle Inhalte sehen, ohne auf das Abrufen von Feeds warten zu müssen.</target>
+            </trans-unit>
+            <trans-unit id="command.option.clearCache">
+                <source>Clear all RSS feed caches before updating</source>
+                <target>Alle RSS-Feed-Caches vor der Aktualisierung leeren</target>
+            </trans-unit>
+            <trans-unit id="command.option.cacheLifetime">
+                <source>Cache lifetime in seconds (default: 600)</source>
+                <target>Cache-Lebensdauer in Sekunden (Standard: 600)</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
