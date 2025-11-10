@@ -22,6 +22,10 @@
       "extension-key": "mpc_rss"
     }
   },
+  "homepage": "https://www.mpeltzer.de/",
+  "replace": {
+    "typo3-ter/mp-core": "self.version"
+  },
   "require": {
     "php": ">=8.2",
     "typo3/cms-core": "^13.4 || ^14.0",
