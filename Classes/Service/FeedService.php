@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Mpc\MpcRss\Service;
 
+use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Log\LogManager;
 
 class FeedService
 {
@@ -30,10 +32,22 @@ class FeedService
         'technology' => 'Digital',
     ];
     private readonly VariableFrontend $cache;
+    private readonly LoggerInterface $logger;
 
     public function __construct(CacheManager $cacheManager, private readonly RequestFactory $requestFactory)
     {
-        $this->cache = $cacheManager->getCache('mpc_rss');
+        $cache = $cacheManager->getCache('mpc_rss');
+        if (!$cache instanceof VariableFrontend) {
+            throw new \RuntimeException(sprintf(
+                'Expected cache frontend "VariableFrontend" for identifier "%s", got "%s"',
+                'mpc_rss',
+                $cache::class
+            ));
+        }
+        $this->cache = $cache;
+        /** @var LoggerInterface $logger */
+        $logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
+        $this->logger = $logger;
     }
 
     /**
@@ -48,18 +62,60 @@ class FeedService
             $cacheIdentifier = 'feed_' . md5($url);
             $feedData = $this->cache->get($cacheIdentifier);
             if ($feedData === false) {
-                $response = $this->requestFactory->request($url, 'GET', [
-                    'headers' => [
-                        'User-Agent' => 'MPC RSS TYPO3/13',
-                        'Accept' => 'application/rss+xml, application/atom+xml;q=0.95, application/xml;q=0.9, */*;q=0.8',
-                    ],
-                    'timeout' => 10,
-                ]);
+                try {
+                    $response = $this->requestFactory->request($url, 'GET', [
+                        'headers' => [
+                            'User-Agent' => 'MPC RSS TYPO3/13',
+                            'Accept' => 'application/rss+xml, application/atom+xml;q=0.95, application/xml;q=0.9, */*;q=0.8',
+                        ],
+                        'timeout' => 10,
+                        'connect_timeout' => 6,
+                    ]);
+                } catch (\Throwable $exception) {
+                    $this->logger->warning(
+                        'Fetching RSS feed failed',
+                        [
+                            'url' => $url,
+                            'exception' => $exception,
+                        ]
+                    );
+                    // Cache a negative result briefly to avoid repeated failing requests
+                    $this->cache->set(
+                        $cacheIdentifier,
+                        [],
+                        ['mpc_rss', 'mpc_rss_feed_error'],
+                        min($cacheLifetime, 300)
+                    );
+                    continue;
+                }
                 if ($response->getStatusCode() !== 200) {
+                    $this->logger->warning(
+                        'Fetching RSS feed returned unexpected status code',
+                        [
+                            'url' => $url,
+                            'statusCode' => $response->getStatusCode(),
+                        ]
+                    );
+                    $this->cache->set(
+                        $cacheIdentifier,
+                        [],
+                        ['mpc_rss', 'mpc_rss_feed_error'],
+                        min($cacheLifetime, 300)
+                    );
                     continue;
                 }
                 $body = (string)$response->getBody();
                 if ($body === '') {
+                    $this->logger->warning(
+                        'Fetching RSS feed returned empty body',
+                        ['url' => $url]
+                    );
+                    $this->cache->set(
+                        $cacheIdentifier,
+                        [],
+                        ['mpc_rss', 'mpc_rss_feed_error'],
+                        min($cacheLifetime, 300)
+                    );
                     continue;
                 }
                 $xml = @simplexml_load_string($body);
