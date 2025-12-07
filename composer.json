@@ -9,6 +9,7 @@
     {
       "name": "Matthias Peltzer",
       "email": "mail@mpeltzer.de",
+      "homepage": "https://www.mpeltzer.de/",
       "role": "Developer"
     }
   ],
@@ -22,7 +23,7 @@
       "extension-key": "mpc_rss"
     }
   },
-  "homepage": "https://www.mpeltzer.de/",
+  "homepage": "https://github.com/MatthiasPeltzer/mpc-rss",
   "replace": {
     "typo3-ter/mpc-rss": "self.version"
   },
