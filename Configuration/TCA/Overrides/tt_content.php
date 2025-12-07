@@ -22,7 +22,6 @@ call_user_func(static function (): void {
                     'levelLinksPosition' => 'bottom',
                     'useSortable' => true,
                     'showPossibleLocalizationRecords' => false,
-                    'showRemovedLocalizationRecords' => false,
                     'showSynchronizationLink' => false,
                     'showAllLocalizationLink' => false,
                     'enabledControls' => [
