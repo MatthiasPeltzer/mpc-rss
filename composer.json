@@ -1,10 +1,7 @@
 {
   "name": "mpc/mpc-rss",
   "description": "TYPO3 extension to fetch and render RSS feeds grouped by category, date or author.",
-  "type": "typo3-cms-extension",
-  "license": [
-    "GPL-2.0-or-later"
-  ],
+  "homepage": "https://github.com/MatthiasPeltzer/mpc-rss",
   "authors": [
     {
       "name": "Matthias Peltzer",
@@ -13,6 +10,16 @@
       "role": "Developer"
     }
   ],
+  "type": "typo3-cms-extension",
+  "version": "1.0.7",
+  "license": ["GPL-2.0-or-later"],
+  "require": {
+    "php": "^8.2",
+    "typo3/cms-core": "^13.0 || ^14.0",
+    "typo3/cms-fluid": "^13.0 || ^14.0",
+    "typo3/cms-extbase": "^13.0 || ^14.0",
+    "typo3/cms-fluid-styled-content": "^13.0 || ^14.0"
+  },
   "autoload": {
     "psr-4": {
       "Mpc\\MpcRss\\": "Classes/"
@@ -22,17 +29,5 @@
     "typo3/cms": {
       "extension-key": "mpc_rss"
     }
-  },
-  "homepage": "https://github.com/MatthiasPeltzer/mpc-rss",
-  "replace": {
-    "typo3-ter/mpc-rss": "self.version"
-  },
-  "require": {
-    "php": ">=8.2",
-    "typo3/cms-core": "^13.4 || ^14.0",
-    "typo3/cms-extbase": "^13.4 || ^14.0",
-    "typo3/cms-fluid": "^13.4 || ^14.0"
   }
 }
-
-
