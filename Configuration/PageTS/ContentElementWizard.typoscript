@@ -3,7 +3,7 @@ mod.wizards.newContentElement.wizardItems.plugins {
     mpcrss_feed {
       iconIdentifier = mpc-rss-plugin
       title = MPC RSS Feed
-      description = Display SPIEGEL RSS feeds grouped by category
+      description = Display RSS feeds grouped by category
       tt_content_defValues {
         CType = list
         list_type = mpcrss_feed
