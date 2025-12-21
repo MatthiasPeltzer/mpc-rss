@@ -1,6 +1,7 @@
 <?php
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 defined('TYPO3') or die();
 
@@ -157,24 +158,50 @@ call_user_func(static function (): void {
 
     ExtensionManagementUtility::addTCAcolumns('tt_content', $tempColumns);
 
-    ExtensionManagementUtility::addPlugin(
-        [
-            'label' => 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_db.xlf:plugin.title',
-            'value' => 'mpcrss_feed',
-            'icon' => 'mpc-rss-plugin',
-            'group' => 'default',
-            'description' => 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_db.xlf:plugin.description',
-        ],
-        'list_type',
-        'mpc_rss'
+    // Register plugin (works with configurePlugin in ext_localconf.php)
+    ExtensionUtility::registerPlugin(
+        'MpcRss',
+        'Feed',
+        'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_db.xlf:plugin.title',
+        'mpc-rss-plugin',
+        'plugins',
+        'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_db.xlf:plugin.description'
     );
 
-    // Show custom fields for this plugin
-    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist']['mpcrss_feed'] = 'tx_mpcrss_feeds,tx_mpcrss_grouping_mode,tx_mpcrss_default_category,tx_mpcrss_include_categories,tx_mpcrss_exclude_categories,tx_mpcrss_max_items,tx_mpcrss_cache_lifetime,tx_mpcrss_show_filter,tx_mpcrss_paginate,tx_mpcrss_items_per_page';
-    
-    // Hide "Record Storage Page" and "Recursive" fields - not needed for this plugin
-    // Feeds are stored as inline records attached directly to the content element
-    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_excludelist']['mpcrss_feed'] = 'pages,recursive';
+    // Define showitem for the CType
+    $GLOBALS['TCA']['tt_content']['types']['mpcrss_feed'] = [
+        'showitem' => '
+            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general,
+                --palette--;;general,
+                --palette--;;headers,
+                tx_mpcrss_feeds,
+                tx_mpcrss_grouping_mode,
+                tx_mpcrss_default_category,
+                tx_mpcrss_include_categories,
+                tx_mpcrss_exclude_categories,
+                tx_mpcrss_max_items,
+                tx_mpcrss_cache_lifetime,
+                tx_mpcrss_show_filter,
+                tx_mpcrss_paginate,
+                tx_mpcrss_items_per_page,
+            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:appearance,
+                --palette--;;frames,
+                --palette--;;appearanceLinks,
+            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:language,
+                --palette--;;language,
+            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
+                --palette--;;hidden,
+                --palette--;;access,
+            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:categories,
+                categories,
+            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:notes,
+                rowDescription,
+            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:extended,
+        ',
+    ];
+
+    // Register icon for the CType in list view
+    $GLOBALS['TCA']['tt_content']['ctrl']['typeicon_classes']['mpcrss_feed'] = 'mpc-rss-plugin';
 });
 
 

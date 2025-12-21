@@ -10,6 +10,7 @@ return [
         'crdate' => 'crdate',
         'delete' => 'deleted',
         'sortby' => 'sorting',
+        'versioningWS' => true,
         'hideTable' => true,
         'security' => [
             'ignorePageTypeRestriction' => true,
@@ -21,7 +22,6 @@ return [
         'enablecolumns' => [
             'disabled' => 'hidden',
         ],
-        'searchFields' => 'title,feed_url,description',
         'iconfile' => 'EXT:mpc_rss/Resources/Public/Icons/Feed.svg',
     ],
     'types' => [
@@ -121,6 +121,7 @@ return [
                     'max' => 100,
                     'eval' => 'trim',
                     'placeholder' => 'Example: BBC News, TechCrunch, etc.',
+                    'searchable' => false,
                 ],
             ],
         'description' => [
