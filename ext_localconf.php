@@ -7,9 +7,6 @@ use Mpc\MpcRss\Task\UpdateFeedsTask;
 use Mpc\MpcRss\Task\UpdateFeedsTaskAdditionalFieldProvider;
 use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
-use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
-use TYPO3\CMS\Core\Imaging\IconRegistry;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 call_user_func(static function (): void {
@@ -30,19 +27,6 @@ call_user_func(static function (): void {
             FeedController::class => 'list',
         ],
         pluginType: ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
-    );
-
-    // Register icons
-    $iconRegistry = GeneralUtility::makeInstance(IconRegistry::class);
-    $iconRegistry->registerIcon(
-        'mpc-rss-plugin',
-        SvgIconProvider::class,
-        ['source' => 'EXT:mpc_rss/Resources/Public/Icons/rss.svg']
-    );
-    $iconRegistry->registerIcon(
-        'mpc-rss-feed',
-        SvgIconProvider::class,
-        ['source' => 'EXT:mpc_rss/Resources/Public/Icons/Feed.svg']
     );
 
     // Register Scheduler Task for automatic RSS feed updates
