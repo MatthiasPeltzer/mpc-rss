@@ -7,6 +7,10 @@ return [
 		'provider' => SvgIconProvider::class,
 		'source' => 'EXT:mpc_rss/Resources/Public/Icons/rss.svg',
 	],
+	'mpc-rss-feed' => [
+		'provider' => SvgIconProvider::class,
+		'source' => 'EXT:mpc_rss/Resources/Public/Icons/Feed.svg',
+	],
 ];
 
 
