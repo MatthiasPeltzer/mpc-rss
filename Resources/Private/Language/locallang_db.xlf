@@ -110,6 +110,59 @@
             <trans-unit id="tt_content.tx_mpcrss_items_per_page.description">
                 <source>Number of items per page when pagination is enabled</source>
             </trans-unit>
+
+            <!-- Backend Preview -->
+            <trans-unit id="preview.noFeeds">
+                <source>No feeds configured</source>
+            </trans-unit>
+            <trans-unit id="preview.feed">
+                <source>Feed</source>
+            </trans-unit>
+            <trans-unit id="preview.url">
+                <source>URL</source>
+            </trans-unit>
+            <trans-unit id="preview.grouping">
+                <source>Grouping</source>
+            </trans-unit>
+            <trans-unit id="preview.maxItems">
+                <source>Max items</source>
+            </trans-unit>
+            <trans-unit id="preview.cache">
+                <source>Cache</source>
+            </trans-unit>
+            <trans-unit id="preview.default">
+                <source>Default</source>
+            </trans-unit>
+            <trans-unit id="preview.include">
+                <source>Include</source>
+            </trans-unit>
+            <trans-unit id="preview.exclude">
+                <source>Exclude</source>
+            </trans-unit>
+            <trans-unit id="preview.filterNav">
+                <source>Filter nav</source>
+            </trans-unit>
+            <trans-unit id="preview.pagination">
+                <source>Pagination</source>
+            </trans-unit>
+            <trans-unit id="preview.yes">
+                <source>Yes</source>
+            </trans-unit>
+            <trans-unit id="preview.no">
+                <source>No</source>
+            </trans-unit>
+            <trans-unit id="preview.perPage">
+                <source>%s / page</source>
+            </trans-unit>
+            <trans-unit id="preview.minutes">
+                <source>%s min</source>
+            </trans-unit>
+            <trans-unit id="preview.untitled">
+                <source>(untitled)</source>
+            </trans-unit>
+            <trans-unit id="preview.hidden">
+                <source>Hidden</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -1,22 +1,13 @@
-# SEO-Friendly URLs (Route Enhancer)
+# SEO-Friendly URLs
 
-Enable clean, SEO-friendly URLs instead of query parameters.
+Replace query parameters with clean URL segments.
 
-## URL Examples
-
-**Before:** `/links/rss-feeds?tx_mpcrss_feed%5BfilterCategory%5D=Politik&tx_mpcrss_feed%5Bpage%5D=1`  
-**After:** `/links/rss-feeds/politik/page-1`
-
-## URL Patterns
-
-- `/rss-feeds/` - Main page
-- `/rss-feeds/politik` - Category filter
-- `/rss-feeds/page-2` - Pagination
-- `/rss-feeds/politik/page-2` - Category with pagination
+**Before:** `/rss-feeds?tx_mpcrss_feed[filterCategory]=Politik&tx_mpcrss_feed[page]=1`
+**After:** `/rss-feeds/politik/page-1`
 
 ## Configuration
 
-Add to `config/sites/[your-site]/config.yaml`:
+Add to `config/sites/<your-site>/config.yaml`:
 
 ```yaml
 routeEnhancers:
@@ -40,52 +31,36 @@ routeEnhancers:
           politik: Politik
           wirtschaft: Wirtschaft
           kultur: Kultur
-          # Add all your categories here
       page:
         type: StaticRangeMapper
         start: '1'
         end: '100'
 ```
 
-## Adding Categories
+Add every category you use to the `map`. Format: `url-slug: "Display Name"`.
 
-Add new categories to the mapping:
+## Multilanguage
+
+The extension translates generated group labels (Today/Heute, General/Allgemein, etc.) automatically via XLF. Category names from RSS feeds pass through as-is.
+
+For multilingual route slugs, use `localeMap`:
 
 ```yaml
 aspects:
   category:
     type: StaticValueMapper
     map:
-      new-category: "New Category"  # slug: "Display Name"
-```
-
-Use lowercase slugs with hyphens for multi-word categories.
-
-## Multilanguage Support
-
-For multiple languages, use `localeMap`:
-
-```yaml
-localeMap:
-  - locale: default
-    map:
       politik: Politik
-  - locale: en_.*
-    map:
-      politics: Politik  # English slug for same category
+    localeMap:
+      - locale: en_.*
+        map:
+          politics: Politik
 ```
 
-This allows `/rss-feeds/politik` (German) and `/en/rss-feeds/politics` (English).
+> When using **date** or **source** grouping, the group names in URLs follow the
+> frontend language. Adjust your `StaticValueMapper` accordingly.
 
 ## Troubleshooting
 
-**URLs still show query parameters:**
-- Clear all caches: `vendor/bin/typo3 cache:flush`
-
-**404 errors on category pages:**
-- Verify category name exists in mapping
-- Check spelling matches exactly
-- Clear caches
-
-**Performance:** Route enhancers are cached and don't impact performance.
-
+- **Query params still visible:** Clear all caches (`vendor/bin/typo3 cache:flush`).
+- **404 on category pages:** Check that the category name in the map matches exactly.

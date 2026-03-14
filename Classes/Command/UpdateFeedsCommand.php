@@ -11,15 +11,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Command to update RSS feeds in the background
- * 
- * This command fetches all configured RSS feeds and updates the cache.
- * It can be run manually via CLI or automatically via TYPO3 Scheduler.
- * 
+ *
  * Usage:
  *   vendor/bin/typo3 mpcrss:updatefeeds
  *   vendor/bin/typo3 mpcrss:updatefeeds --clear-cache
@@ -28,7 +25,8 @@ class UpdateFeedsCommand extends Command
 {
     public function __construct(
         private readonly FeedService $feedService,
-        private readonly ConnectionPool $connectionPool
+        private readonly ConnectionPool $connectionPool,
+        private readonly CacheManager $cacheManager,
     ) {
         parent::__construct();
     }
@@ -58,33 +56,18 @@ class UpdateFeedsCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $io->title('MPC RSS Feed Updater');
 
-        $clearCache = $input->getOption('clear-cache');
-        $cacheLifetime = (int)$input->getOption('cache-lifetime');
-
-        if ($clearCache) {
+        if ($input->getOption('clear-cache')) {
             $io->section('Clearing RSS feed cache...');
-            $cacheManager = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Cache\CacheManager::class);
-            $cache = $cacheManager->getCache('mpc_rss');
-            $cache->flush();
+            $this->cacheManager->getCache('mpc_rss')->flush();
             $io->success('Cache cleared successfully.');
         }
 
-        // Fetch all feed URLs from the database
-        $io->section('Fetching feed configurations from database...');
-        $queryBuilder = $this->connectionPool->getQueryBuilderForTable('tx_mpcrss_domain_model_feed');
-        $feedRecords = $queryBuilder
-            ->select('feed_url', 'source_name')
-            ->from('tx_mpcrss_domain_model_feed')
-            ->where(
-                $queryBuilder->expr()->eq('hidden', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
-                $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
-                $queryBuilder->expr()->neq('feed_url', $queryBuilder->createNamedParameter(''))
-            )
-            ->groupBy('feed_url')
-            ->executeQuery()
-            ->fetchAllAssociative();
+        $cacheLifetime = (int)$input->getOption('cache-lifetime');
 
-        if (empty($feedRecords)) {
+        $io->section('Fetching feed configurations from database...');
+        $feedRecords = $this->fetchFeedRecords();
+
+        if ($feedRecords === []) {
             $io->warning('No RSS feeds configured in the database.');
             return Command::SUCCESS;
         }
@@ -102,7 +85,6 @@ class UpdateFeedsCommand extends Command
         $io->text(sprintf('Found %d unique feed URL(s) to update.', count($urls)));
         $io->newLine();
 
-        // Update each feed
         $io->section('Updating feeds...');
         $io->progressStart(count($urls));
 
@@ -112,17 +94,7 @@ class UpdateFeedsCommand extends Command
 
         foreach ($urls as $url) {
             try {
-                // Fetch the feed and update cache
-                // Use maxItems=0 to fetch all items during background update
-                $this->feedService->fetchGroupedByCategory(
-                    [$url],
-                    maxItems: 0, // Fetch all items
-                    cacheLifetime: $cacheLifetime,
-                    includeCategories: [],
-                    excludeCategories: [],
-                    sourceNames: $sourceNames,
-                    groupingMode: 'category'
-                );
+                $this->feedService->warmCache($url, $cacheLifetime, $sourceNames);
                 $successCount++;
             } catch (\Throwable $e) {
                 $errorCount++;
@@ -134,7 +106,6 @@ class UpdateFeedsCommand extends Command
         $io->progressFinish();
         $io->newLine();
 
-        // Summary
         $io->section('Summary');
         $io->table(
             ['Status', 'Count'],
@@ -145,7 +116,7 @@ class UpdateFeedsCommand extends Command
             ]
         );
 
-        if (!empty($errors)) {
+        if ($errors !== []) {
             $io->warning('Some feeds failed to update:');
             $io->listing($errors);
         }
@@ -158,5 +129,26 @@ class UpdateFeedsCommand extends Command
         $io->success('All RSS feeds updated successfully!');
         return Command::SUCCESS;
     }
-}
 
+    /**
+     * @return list<array{feed_url: string, source_name: string}>
+     */
+    private function fetchFeedRecords(): array
+    {
+        $qb = $this->connectionPool->getQueryBuilderForTable('tx_mpcrss_domain_model_feed');
+        return $qb
+            ->select('feed_url')
+            ->addSelectLiteral(
+                'MAX(' . $qb->quoteIdentifier('source_name') . ') AS ' . $qb->quoteIdentifier('source_name')
+            )
+            ->from('tx_mpcrss_domain_model_feed')
+            ->where(
+                $qb->expr()->eq('hidden', $qb->createNamedParameter(0, ParameterType::INTEGER)),
+                $qb->expr()->eq('deleted', $qb->createNamedParameter(0, ParameterType::INTEGER)),
+                $qb->expr()->neq('feed_url', $qb->createNamedParameter(''))
+            )
+            ->groupBy('feed_url')
+            ->executeQuery()
+            ->fetchAllAssociative();
+    }
+}

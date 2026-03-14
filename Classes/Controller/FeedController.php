@@ -4,103 +4,102 @@ declare(strict_types=1);
 
 namespace Mpc\MpcRss\Controller;
 
-use Doctrine\DBAL\ParameterType;
 use Mpc\MpcRss\Domain\Repository\FeedRepository;
 use Mpc\MpcRss\Service\FeedService;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class FeedController extends ActionController
 {
-    public function __construct(
-        private readonly FeedService $feedService,
-        private readonly FeedRepository $feedRepository
-    ) {
-    }
+    private const EXT_NAME = 'MpcRss';
 
     /**
-     * Parse comma-separated string into trimmed array
+     * Keys that FeedService uses for generated groups (date mode, default fallback).
+     * Maps each English key to its XLF translation id.
+     */
+    private const GROUP_LABEL_KEYS = [
+        'General' => 'group.default',
+        'Unknown Source' => 'group.unknownSource',
+        'No Date' => 'group.noDate',
+        'Today' => 'group.today',
+        'Yesterday' => 'group.yesterday',
+        'This Week' => 'group.thisWeek',
+        'This Month' => 'group.thisMonth',
+        'Last 3 Months' => 'group.last3Months',
+        'Older' => 'group.older',
+    ];
+
+    public function __construct(
+        private readonly FeedService $feedService,
+        private readonly FeedRepository $feedRepository,
+    ) {}
+
+    /**
+     * @return list<string>
      */
     private function parseCommaSeparated(string $value): array
     {
         return array_values(array_filter(array_map('trim', explode(',', $value))));
     }
 
-    /**
-     * Get setting from TCA field or fallback to TypoScript
-     */
     private function getSetting(array $data, string $tcaField, string $settingKey, mixed $default): mixed
     {
         return $data[$tcaField] ?? ($this->settings[$settingKey] ?? $default);
     }
 
     /**
-     * Fetch feed URLs and source names from database
-     * 
-     * @return array{0: array<string>, 1: array<string, string>} [urls, sourceNames]
+     * @return array{0: list<string>, 1: array<string, string>}
      */
     private function fetchFeedUrlsAndSourceNames(int $contentUid): array
     {
         $urls = [];
         $sourceNames = [];
-        
+
         if ($contentUid <= 0) {
             return [$urls, $sourceNames];
         }
 
-        $feeds = $this->feedRepository->findByContentElement($contentUid);
-        $feedCount = is_countable($feeds) ? count($feeds) : (method_exists($feeds, 'count') ? $feeds->count() : 0);
-        
-        // If no feeds found via repository, try direct database query as fallback
-        if ($feedCount === 0) {
-            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-                ->getQueryBuilderForTable('tx_mpcrss_domain_model_feed');
-            $feedRecords = $queryBuilder
-                ->select('*')
-                ->from('tx_mpcrss_domain_model_feed')
-                ->where(
-                    $queryBuilder->expr()->eq('tt_content', $queryBuilder->createNamedParameter($contentUid, ParameterType::INTEGER)),
-                    $queryBuilder->expr()->eq('hidden', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
-                    $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER))
-                )
-                ->orderBy('sorting', 'ASC')
-                ->executeQuery()
-                ->fetchAllAssociative();
-            
-            foreach ($feedRecords as $record) {
-                if (!empty($record['feed_url'])) {
-                    $feedUrl = $record['feed_url'];
-                    $urls[] = $feedUrl;
-                    if (!empty($record['source_name'])) {
-                        $sourceNames[$feedUrl] = $record['source_name'];
-                    }
-                }
-            }
-        } else {
-            // Use repository results
-            foreach ($feeds as $feed) {
-                if (!$feed->isHidden() && $feed->getFeedUrl() !== '') {
-                    $feedUrl = $feed->getFeedUrl();
-                    $urls[] = $feedUrl;
-                    if ($feed->getSourceName() !== '') {
-                        $sourceNames[$feedUrl] = $feed->getSourceName();
-                    }
+        foreach ($this->feedRepository->findByContentElement($contentUid) as $feed) {
+            if (!$feed->isHidden() && $feed->getFeedUrl() !== '') {
+                $feedUrl = $feed->getFeedUrl();
+                $urls[] = $feedUrl;
+                if ($feed->getSourceName() !== '') {
+                    $sourceNames[$feedUrl] = $feed->getSourceName();
                 }
             }
         }
-        
+
         return [$urls, $sourceNames];
+    }
+
+    /**
+     * Translate known group keys (from FeedService) to the current frontend language.
+     * Keys that originate from RSS feeds (actual category names) pass through unchanged.
+     *
+     * @param array<string, list<array<string, mixed>>> $grouped
+     * @return array<string, list<array<string, mixed>>>
+     */
+    private function translateGroupKeys(array $grouped): array
+    {
+        $translated = [];
+        foreach ($grouped as $key => $items) {
+            if (isset(self::GROUP_LABEL_KEYS[$key])) {
+                $label = LocalizationUtility::translate(self::GROUP_LABEL_KEYS[$key], self::EXT_NAME) ?? $key;
+                $translated[$label] = $items;
+            } else {
+                $translated[$key] = $items;
+            }
+        }
+        return $translated;
     }
 
     public function listAction(): ResponseInterface
     {
-        // Read from TCA fields (data array) or fallback to TypoScript settings
         $currentContentObject = $this->request->getAttribute('currentContentObject');
         $data = $currentContentObject?->data ?? [];
         $contentUid = (int)($data['uid'] ?? 0);
-        
+
         $maxItems = (int)$this->getSetting($data, 'tx_mpcrss_max_items', 'maxItems', 9);
         $cacheLifetime = (int)$this->getSetting($data, 'tx_mpcrss_cache_lifetime', 'cacheLifetime', 1800);
         $include = $this->parseCommaSeparated((string)$this->getSetting($data, 'tx_mpcrss_include_categories', 'includeCategories', ''));
@@ -113,42 +112,34 @@ class FeedController extends ActionController
         $defaultCategory = (string)$this->getSetting($data, 'tx_mpcrss_default_category', 'defaultCategory', 'Politik');
         $groupingMode = (string)$this->getSetting($data, 'tx_mpcrss_grouping_mode', 'groupingMode', 'category');
 
-        // Fetch feeds from database (inline records)
         [$urls, $sourceNames] = $this->fetchFeedUrlsAndSourceNames($contentUid);
 
-        // No fallback - requires configured feeds
-        // Users must add feeds via the backend inline records
-
         $grouped = $this->feedService->fetchGroupedByCategory($urls, $maxItems, $cacheLifetime, $include, $exclude, $sourceNames, $groupingMode);
+        $grouped = $this->translateGroupKeys($grouped);
 
-        // Store all categories for navigation BEFORE filtering
         $allCategories = array_keys($grouped);
         $filterCategory = $this->request->hasArgument('filterCategory') ? (string)$this->request->getArgument('filterCategory') : '';
-        
-        // Determine active category: explicit filter > pagination category > default category > first available
+
         $activeCategory = '';
         if ($filterCategory !== '') {
             $activeCategory = $filterCategory;
         } elseif ($paginateCategory !== '') {
             $activeCategory = $paginateCategory;
         } else {
-            // Use default category if configured and exists, otherwise first category
             if ($defaultCategory !== '' && in_array($defaultCategory, $allCategories, true)) {
                 $activeCategory = $defaultCategory;
             } else {
                 $activeCategory = $allCategories[0] ?? '';
             }
         }
-        
-        // Adjust navigation based on grouping mode
+
         $navigationLabel = $this->getNavigationLabel($groupingMode);
         $showNavigation = $groupingMode !== 'none' && $showFilter;
 
         $page = max(1, (int)($this->request->hasArgument('page') ? $this->request->getArgument('page') : 1));
         $pagination = null;
         $pages = [];
-        
-        // Handle pagination BEFORE filtering grouped array
+
         if ($paginate && $activeCategory !== '' && isset($grouped[$activeCategory])) {
             $total = count($grouped[$activeCategory]);
             $numPages = (int)ceil($total / $itemsPerPage);
@@ -164,14 +155,13 @@ class FeedController extends ActionController
             $pages = range(1, $numPages);
         }
 
-        // Filter to active category only (keeping all categories for navigation)
         if ($activeCategory !== '' && isset($grouped[$activeCategory])) {
             $grouped = [$activeCategory => $grouped[$activeCategory]];
         }
 
         $this->view->assignMultiple([
             'grouped' => $grouped,
-            'categories' => $allCategories, // Pass all categories for navigation
+            'categories' => $allCategories,
             'activeCategory' => $activeCategory,
             'showFilter' => $showNavigation,
             'paginate' => $paginate,
@@ -192,19 +182,14 @@ class FeedController extends ActionController
         return $this->htmlResponse();
     }
 
-    /**
-     * Get navigation label based on grouping mode
-     */
     private function getNavigationLabel(string $mode): string
     {
         return match ($mode) {
-            'category' => 'Categories',
-            'source' => 'Sources',
-            'date' => 'Time Periods',
+            'category' => LocalizationUtility::translate('navigation.categories', self::EXT_NAME) ?? 'Categories',
+            'source' => LocalizationUtility::translate('navigation.sources', self::EXT_NAME) ?? 'Sources',
+            'date' => LocalizationUtility::translate('navigation.timePeriods', self::EXT_NAME) ?? 'Time Periods',
             'none' => '',
-            default => 'Filter',
+            default => LocalizationUtility::translate('navigation.filter', self::EXT_NAME) ?? 'Filter',
         };
     }
 }
-
-

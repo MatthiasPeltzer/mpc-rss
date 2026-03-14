@@ -103,6 +103,46 @@
                 <source>Filter</source>
             </trans-unit>
             
+            <!-- Group Labels (frontend display for generated groups) -->
+            <trans-unit id="group.default">
+                <source>General</source>
+            </trans-unit>
+            <trans-unit id="group.unknownSource">
+                <source>Unknown Source</source>
+            </trans-unit>
+            <trans-unit id="group.noDate">
+                <source>No Date</source>
+            </trans-unit>
+            <trans-unit id="group.today">
+                <source>Today</source>
+            </trans-unit>
+            <trans-unit id="group.yesterday">
+                <source>Yesterday</source>
+            </trans-unit>
+            <trans-unit id="group.thisWeek">
+                <source>This Week</source>
+            </trans-unit>
+            <trans-unit id="group.thisMonth">
+                <source>This Month</source>
+            </trans-unit>
+            <trans-unit id="group.last3Months">
+                <source>Last 3 Months</source>
+            </trans-unit>
+            <trans-unit id="group.older">
+                <source>Older</source>
+            </trans-unit>
+
+            <!-- Navigation Labels -->
+            <trans-unit id="navigation.categories">
+                <source>Categories</source>
+            </trans-unit>
+            <trans-unit id="navigation.sources">
+                <source>Sources</source>
+            </trans-unit>
+            <trans-unit id="navigation.timePeriods">
+                <source>Time Periods</source>
+            </trans-unit>
+
             <!-- Scheduler Task -->
             <trans-unit id="scheduler.task.title">
                 <source>Update RSS Feeds</source>

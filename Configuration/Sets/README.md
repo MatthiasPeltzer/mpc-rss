@@ -1,54 +1,19 @@
-# TYPO3 13 Site Sets Configuration
+# Site Set: MPC RSS
 
-This directory contains the Site Set configuration for the MPC RSS extension, which is the modern TYPO3 13 way to include TypoScript and configuration.
-
-## Structure
-
-```
-Configuration/Sets/MpcRss/
-├── config.yaml          # Set metadata and dependencies
-├── settings.typoscript  # TypoScript setup (replaces old setup.typoscript)
-└── page.tsconfig        # Page TSconfig (Content Element Wizard)
-```
-
-## Set Name
-
-**`mpc/mpc-rss`**
-
-This identifier is used in your site configuration (`config/sites/mpc/config.yaml`).
+TYPO3 13+ Site Set that auto-includes the extension's TypoScript and PageTSconfig.
 
 ## Usage
 
-### Include in Site Configuration
-
-Add to your `config/sites/mpc/config.yaml` under `dependencies`:
+Add to your site's `config/sites/<your-site>/config.yaml`:
 
 ```yaml
 dependencies:
-  - mpc/mp-core
-  - mpc/mp-core-form
-  - mpc/mp-core-news
-  - mpc/mp-core-container
-  - mpc/mp-core-seo
-  - mpc/mpc-sitepackage
-  - mpc/mpc-rss  # ← Add this line
+  - mpc/mpc-rss
 ```
 
-### Clear Caches
+Then clear caches: `vendor/bin/typo3 cache:flush`
 
-After adding the set, clear all caches:
-
-```bash
-bin/typo3 cache:flush
-```
-
-## What This Replaces
-
-In TYPO3 < 13, you had to manually include static TypoScript templates via the Template module. With Site Sets, the TypoScript is automatically included when the set is added to your site configuration.
-
-## Configuration
-
-Default settings can be overridden in your site configuration:
+## Override settings
 
 ```yaml
 settings:
@@ -60,15 +25,4 @@ settings:
         defaultCategory: 'News'
 ```
 
-## Dependencies
-
-The set automatically requires:
-- `typo3/fluid-styled-content` - For content element rendering
-
-## Related Files
-
-- **TCA Configuration**: `Configuration/TCA/`
-- **Domain Models**: `Classes/Domain/Model/`
-- **Controllers**: `Classes/Controller/`
-- **Templates**: `Resources/Private/Templates/`
-
+All settings are also configurable per content element in the backend.

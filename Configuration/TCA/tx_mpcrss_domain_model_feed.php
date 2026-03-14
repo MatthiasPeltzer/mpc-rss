@@ -111,19 +111,19 @@ return [
                 'placeholder' => 'https://example.com/feed.rss',
             ],
         ],
-            'source_name' => [
-                'exclude' => false,
-                'label' => 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_db.xlf:tx_mpcrss_domain_model_feed.source_name',
-                'description' => 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_db.xlf:tx_mpcrss_domain_model_feed.source_name.description',
-                'config' => [
-                    'type' => 'input',
-                    'size' => 30,
-                    'max' => 100,
-                    'eval' => 'trim',
-                    'placeholder' => 'Example: BBC News, TechCrunch, etc.',
-                    'searchable' => false,
-                ],
+        'source_name' => [
+            'exclude' => false,
+            'label' => 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_db.xlf:tx_mpcrss_domain_model_feed.source_name',
+            'description' => 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_db.xlf:tx_mpcrss_domain_model_feed.source_name.description',
+            'config' => [
+                'type' => 'input',
+                'size' => 30,
+                'max' => 100,
+                'eval' => 'trim',
+                'placeholder' => 'Example: BBC News, TechCrunch, etc.',
+                'searchable' => false,
             ],
+        ],
         'description' => [
             'exclude' => false,
             'label' => 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_db.xlf:tx_mpcrss_domain_model_feed.description',
