@@ -5,12 +5,9 @@ mod.wizards.newContentElement.wizardItems.plugins {
       title = MPC RSS Feed
       description = Display RSS feeds grouped by category
       tt_content_defValues {
-        CType = list
-        list_type = mpcrss_feed
+        CType = mpcrss_feed
       }
     }
   }
   show := addToList(mpcrss_feed)
 }
-
-

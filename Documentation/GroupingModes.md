@@ -1,49 +1,22 @@
 # Grouping Modes
 
-Organize RSS feed items by category, source, date, or display as a unified timeline.
+| Mode | Groups by | Best for |
+|------|-----------|----------|
+| **Category** (default) | RSS category tags | Topic-based browsing |
+| **Source** | Feed source name | Multi-source aggregation |
+| **Date** | Time periods (Today, This Week, ...) | Chronological archives |
+| **None** | No grouping -- unified timeline | Real-time / mobile feeds |
 
-## Available Modes
-
-### 1. Category (Default)
-Groups items by RSS category tags (e.g., Politics, Technology, Business).
-
-**Use when:** Users want to browse by topic/subject matter.
-
-**Limitations:** Requires consistent RSS category tags across feeds.
-
-### 2. Source (Recommended)
-Groups items by feed source name (e.g., BBC News, TechCrunch, The Guardian).
-
-**Use when:** Displaying multiple news sources with clear attribution.
-
-**Advantages:** Always consistent, no fallback complexity.
-
-### 3. Date
-Groups items by time periods (Today, Yesterday, This Week, This Month).
-
-**Use when:** Chronological browsing matters (news monitoring, archives).
-
-### 4. None (Unified Timeline)
-No grouping - all items sorted chronologically.
-
-**Use when:** Social media-style feed or real-time monitoring.
-
-## Comparison
-
-| Mode | Best For | Consistency | Complexity |
-|------|----------|-------------|------------|
-| Category | Topic browsing | Variable | Medium |
-| Source | Multi-source aggregators | Always | Low |
-| Date | Archives, time-based | Always | Low |
-| None | Real-time, mobile | Always | Lowest |
+**Source** mode is the most predictable -- it always works regardless of whether feeds provide category tags.
 
 ## Configuration
 
-**Per Plugin:**
-- Set "Grouping Mode" in plugin settings (Content Element → Plugin → MPC RSS Feed)
+**Per content element:** set *Grouping Mode* in the plugin fields.
 
-**Global Default:**
-- Site Management → Settings → MPC RSS Plugin → Grouping Mode
+**Global default:** Site Management > Settings > MPC RSS Plugin > Grouping Mode.
 
-**Recommendation:** Use "Source" mode for most cases - it's predictable and always works.
+## Category mode details
 
+When a feed item has no RSS category tag, the extension tries to detect one from the feed URL path (e.g. `/politik/` maps to "Politik"). If that fails, the source name or "General" is used as fallback.
+
+Include/exclude filters (comma-separated, case-insensitive) let you limit which categories appear.
