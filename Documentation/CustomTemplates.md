@@ -1,124 +1,87 @@
-# Custom Templates & Navigation
+# Custom Templates
 
-Customize frontend display, navigation, and styling by overriding templates in your site package.
+Override templates by pointing to your site package. TYPO3's fallback system means you only need to override the files you want to change.
 
-## Setting Up Custom Templates
+## Setup
 
-### Method 1: Site Settings (Recommended)
+**Via Site Settings** (recommended):
+Site Management > Your Site > Settings > MPC RSS View Paths.
 
-**Site Management** → Your Site → **Settings** → **MPC RSS View Paths**:
-- Template Root Path: `EXT:your_sitepackage/Resources/Private/Templates/`
-- Partial Root Path: `EXT:your_sitepackage/Resources/Private/Partials/`
-- Layout Root Path: `EXT:your_sitepackage/Resources/Private/Layouts/`
-
-### Method 2: TypoScript
+**Via TypoScript:**
 
 ```typoscript
-plugin.tx_mpcrss {
-  view {
+plugin.tx_mpcrss.view {
     templateRootPaths.30 = EXT:your_sitepackage/Resources/Private/Templates/
     partialRootPaths.30 = EXT:your_sitepackage/Resources/Private/Partials/
     layoutRootPaths.30 = EXT:your_sitepackage/Resources/Private/Layouts/
-  }
 }
 ```
 
-**Folder structure:**
+Expected file structure:
+
 ```
 your_sitepackage/Resources/Private/
-├── Templates/Feed/List.html
-├── Partials/RssItem.html
-└── Layouts/Default.html
+└── Templates/Feed/List.html
 ```
 
-TYPO3 uses fallback paths - if a template isn't found in your custom path, it falls back to the extension defaults.
+## Template variables
 
-## Navigation Customization
+**Layout / grouping:**
 
-The category navigation automatically adapts to the grouping mode:
+| Variable | Type | Description |
+|----------|------|-------------|
+| `{grouped}` | array | Items keyed by group name |
+| `{categories}` | array | All group names (for navigation) |
+| `{activeCategory}` | string | Currently selected group |
+| `{showFilter}` | bool | Whether to show navigation pills |
+| `{groupingMode}` | string | `category`, `source`, `date`, or `none` |
+| `{navigationLabel}` | string | Translated heading for the navigation |
 
-| Grouping Mode | Navigation Label | Shows |
-|---------------|------------------|-------|
-| Category | "Filter by Category" | Topic categories |
-| Source | "Filter by Source" | Feed sources |
-| Date | "Filter by Date" | Time periods |
-| None | (hidden) | No navigation |
+**Pagination** (when enabled):
 
-### Customizing Navigation Styles
+| Variable | Type | Description |
+|----------|------|-------------|
+| `{paginate}` | bool | Pagination enabled |
+| `{pagination}` | array | `page`, `numPages`, `total`, `activeCategory` |
+| `{pages}` | array | Page numbers for iteration |
 
-Override CSS in your site package:
+**Feed item properties** (inside `<f:for each="{entries}" as="entry">`):
 
-```css
-/* Hide navigation labels */
-.rss-categories h3 { display: none; }
+| Property | Description |
+|----------|-------------|
+| `{entry.title}` | Plain-text title |
+| `{entry.description}` | Sanitized HTML description |
+| `{entry.link}` | Article URL (http/https only) |
+| `{entry.date}` | ISO 8601 date string |
+| `{entry.image}` | Image URL or empty |
+| `{entry.sourceName}` | Display name of the feed source |
+| `{entry.categories}` | Array of RSS category strings |
 
-/* Customize badges */
-.rss-categories .badge {
-    background-color: #28a745 !important;
-}
-
-/* Mode-specific styling */
-.rss-categories ul[data-grouping-mode="source"] .nav-link {
-    font-weight: bold;
-}
-```
-
-### Disable Navigation
-
-Hide the navigation completely in "None" grouping mode, or via CSS:
-```css
-.rss-categories { display: none; }
-```
-
-## Template Variables
-
-### Available in List.html
-
-- `{grouped}` - Items grouped by category/source/date
-- `{categories}` - All available category names
-- `{activeCategory}` - Currently selected filter
-- `{showFilter}` - Boolean: show navigation
-- `{paginate}` - Boolean: pagination enabled
-- `{pagination}` - Pagination data
-- `{settings}` - Plugin settings
-
-### Feed Item Properties
-
-- `{item.title}`, `{item.description}`, `{item.link}`, `{item.date}`
-- `{item.categories}`, `{item.image}`, `{item.sourceName}`, `{item.source}`
-
-## Example: Custom Item Template
+## Example
 
 ```html
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
 <f:layout name="Default" />
-<f:section name="main">
-    <div class="rss-feed">
-        <f:for each="{grouped}" as="items" key="category">
-            <div class="rss-category">
-                <h2>{category}</h2>
-                <f:for each="{items}" as="item">
-                    <article class="rss-item">
-                        <h3><a href="{item.link}">{item.title}</a></h3>
-                        <div class="rss-meta">
-                            <span>{item.sourceName}</span>
-                            <time>{item.date -> f:format.date(format: 'd.m.Y')}</time>
-                        </div>
-                        <div class="rss-description">
-                            {item.description -> f:format.html()}
-                        </div>
-                    </article>
-                </f:for>
-            </div>
-        </f:for>
-    </div>
+<f:section name="Main">
+  <f:for each="{grouped}" as="items" key="category">
+    <h2>{category}</h2>
+    <f:for each="{items}" as="item">
+      <article>
+        <h3><a href="{item.link}" target="_blank" rel="noopener noreferrer">{item.title}</a></h3>
+        <f:if condition="{item.date}">
+          <time datetime="{item.date}"><f:format.date date="{item.date}" format="d.m.Y" /></time>
+        </f:if>
+        <p>
+          <f:format.stripTags>
+            <f:format.crop maxCharacters="200" append="…">{item.description}</f:format.crop>
+          </f:format.stripTags>
+        </p>
+      </article>
+    </f:for>
+  </f:for>
 </f:section>
-</html>
 ```
 
-## Reference
+> **Security:** Always use `f:format.stripTags` for descriptions -- never `f:format.html()`.
+> Descriptions originate from external feeds; stripping tags in the template provides defense-in-depth.
 
-Default templates are in: `EXT:mpc_rss/Resources/Private/Templates/Feed/List.html`
-
-Copy and modify incrementally. The fallback system ensures nothing breaks if you miss a template.
-
+Default template: `EXT:mpc_rss/Resources/Private/Templates/Feed/List.html`

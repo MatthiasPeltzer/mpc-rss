@@ -144,6 +144,76 @@
                 <source>Number of items per page when pagination is enabled</source>
                 <target>Anzahl der Einträge pro Seite bei aktiviertem Seitenumbruch</target>
             </trans-unit>
+
+            <!-- Backend Preview -->
+            <trans-unit id="preview.noFeeds">
+                <source>No feeds configured</source>
+                <target>Keine Feeds konfiguriert</target>
+            </trans-unit>
+            <trans-unit id="preview.feed">
+                <source>Feed</source>
+                <target>Feed</target>
+            </trans-unit>
+            <trans-unit id="preview.url">
+                <source>URL</source>
+                <target>URL</target>
+            </trans-unit>
+            <trans-unit id="preview.grouping">
+                <source>Grouping</source>
+                <target>Gruppierung</target>
+            </trans-unit>
+            <trans-unit id="preview.maxItems">
+                <source>Max items</source>
+                <target>Max. Einträge</target>
+            </trans-unit>
+            <trans-unit id="preview.cache">
+                <source>Cache</source>
+                <target>Cache</target>
+            </trans-unit>
+            <trans-unit id="preview.default">
+                <source>Default</source>
+                <target>Standard</target>
+            </trans-unit>
+            <trans-unit id="preview.include">
+                <source>Include</source>
+                <target>Einbeziehen</target>
+            </trans-unit>
+            <trans-unit id="preview.exclude">
+                <source>Exclude</source>
+                <target>Ausschließen</target>
+            </trans-unit>
+            <trans-unit id="preview.filterNav">
+                <source>Filter nav</source>
+                <target>Filter-Nav.</target>
+            </trans-unit>
+            <trans-unit id="preview.pagination">
+                <source>Pagination</source>
+                <target>Seitenumbruch</target>
+            </trans-unit>
+            <trans-unit id="preview.yes">
+                <source>Yes</source>
+                <target>Ja</target>
+            </trans-unit>
+            <trans-unit id="preview.no">
+                <source>No</source>
+                <target>Nein</target>
+            </trans-unit>
+            <trans-unit id="preview.perPage">
+                <source>%s / page</source>
+                <target>%s / Seite</target>
+            </trans-unit>
+            <trans-unit id="preview.minutes">
+                <source>%s min</source>
+                <target>%s Min.</target>
+            </trans-unit>
+            <trans-unit id="preview.untitled">
+                <source>(untitled)</source>
+                <target>(ohne Titel)</target>
+            </trans-unit>
+            <trans-unit id="preview.hidden">
+                <source>Hidden</source>
+                <target>Versteckt</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

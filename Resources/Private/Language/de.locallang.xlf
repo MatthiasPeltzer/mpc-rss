@@ -133,6 +133,58 @@
                 <target>Filter</target>
             </trans-unit>
             
+            <!-- Group Labels (frontend display for generated groups) -->
+            <trans-unit id="group.default">
+                <source>General</source>
+                <target>Allgemein</target>
+            </trans-unit>
+            <trans-unit id="group.unknownSource">
+                <source>Unknown Source</source>
+                <target>Unbekannte Quelle</target>
+            </trans-unit>
+            <trans-unit id="group.noDate">
+                <source>No Date</source>
+                <target>Kein Datum</target>
+            </trans-unit>
+            <trans-unit id="group.today">
+                <source>Today</source>
+                <target>Heute</target>
+            </trans-unit>
+            <trans-unit id="group.yesterday">
+                <source>Yesterday</source>
+                <target>Gestern</target>
+            </trans-unit>
+            <trans-unit id="group.thisWeek">
+                <source>This Week</source>
+                <target>Diese Woche</target>
+            </trans-unit>
+            <trans-unit id="group.thisMonth">
+                <source>This Month</source>
+                <target>Diesen Monat</target>
+            </trans-unit>
+            <trans-unit id="group.last3Months">
+                <source>Last 3 Months</source>
+                <target>Letzte 3 Monate</target>
+            </trans-unit>
+            <trans-unit id="group.older">
+                <source>Older</source>
+                <target>Älter</target>
+            </trans-unit>
+
+            <!-- Navigation Labels -->
+            <trans-unit id="navigation.categories">
+                <source>Categories</source>
+                <target>Kategorien</target>
+            </trans-unit>
+            <trans-unit id="navigation.sources">
+                <source>Sources</source>
+                <target>Quellen</target>
+            </trans-unit>
+            <trans-unit id="navigation.timePeriods">
+                <source>Time Periods</source>
+                <target>Zeiträume</target>
+            </trans-unit>
+
             <!-- Scheduler Task -->
             <trans-unit id="scheduler.task.title">
                 <source>Update RSS Feeds</source>

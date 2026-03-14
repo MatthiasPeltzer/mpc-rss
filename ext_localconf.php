@@ -10,12 +10,10 @@ use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 call_user_func(static function (): void {
-    // Register cache if not already configured
-    $cacheKey = 'mpc_rss';
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$cacheKey] ??= [];
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$cacheKey]['frontend'] ??= VariableFrontend::class;
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$cacheKey]['backend'] ??= Typo3DatabaseBackend::class;
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$cacheKey]['groups'] ??= ['mpc_rss']; // Custom group for isolated cache management
+    // Register cache early so the DI container can resolve @cache.mpc_rss
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['mpc_rss'] ??= [];
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['mpc_rss']['frontend'] ??= VariableFrontend::class;
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['mpc_rss']['backend'] ??= Typo3DatabaseBackend::class;
 
     ExtensionUtility::configurePlugin(
         extensionName: 'MpcRss',
@@ -29,7 +27,6 @@ call_user_func(static function (): void {
         pluginType: ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
     );
 
-    // Register Scheduler Task for automatic RSS feed updates
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][UpdateFeedsTask::class] = [
         'extension' => 'mpc_rss',
         'title' => 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang.xlf:scheduler.task.title',
@@ -37,5 +34,3 @@ call_user_func(static function (): void {
         'additionalFields' => UpdateFeedsTaskAdditionalFieldProvider::class,
     ];
 });
-
-

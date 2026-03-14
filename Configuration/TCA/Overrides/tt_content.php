@@ -1,5 +1,6 @@
 <?php
 
+use Mpc\MpcRss\Preview\FeedPreviewRenderer;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
@@ -168,8 +169,8 @@ call_user_func(static function (): void {
         'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_db.xlf:plugin.description'
     );
 
-    // Define showitem for the CType
     $GLOBALS['TCA']['tt_content']['types']['mpcrss_feed'] = [
+        'previewRenderer' => FeedPreviewRenderer::class,
         'showitem' => '
             --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general,
                 --palette--;;general,
