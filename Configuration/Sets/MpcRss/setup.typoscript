@@ -4,7 +4,7 @@ plugin.tx_mpcrss {
     templateRootPaths.10 = EXT:mpc_rss/Resources/Private/Templates/
     partialRootPaths.10 = EXT:mpc_rss/Resources/Private/Partials/
     layoutRootPaths.10 = EXT:mpc_rss/Resources/Private/Layouts/
-    
+
     # Site-specific paths from site settings (priority 20 - higher priority)
     templateRootPaths.20 = {$plugin.tx_mpcrss.view.templateRootPath}
     partialRootPaths.20 = {$plugin.tx_mpcrss.view.partialRootPath}
@@ -16,12 +16,3 @@ plugin.tx_mpcrss {
     requireCHashArgumentForActionArguments = 1
   }
 }
-
-# Plugin configuration for TYPO3 13.x
-tt_content.list.20.mpcrss_feed = USER
-tt_content.list.20.mpcrss_feed {
-  userFunc = TYPO3\CMS\Extbase\Core\Bootstrap->run
-  extensionName = MpcRss
-  pluginName = Feed
-}
-
