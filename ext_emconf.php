@@ -7,10 +7,10 @@ $EM_CONF['mpc_rss'] = [
     'author' => 'Matthias Peltzer',
     'author_email' => 'mail@mpeltzer.de',
     'state' => 'stable',
-    'version' => '1.0.9',
+    'version' => '1.0.10',
     'constraints' => [
         'depends' => [
-            'typo3' => '13.0.0-14.99.99',
+            'typo3' => '13.4.0-14.99.99',
         ],
         'conflicts' => [],
         'suggests' => [],

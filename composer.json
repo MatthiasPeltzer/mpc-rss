@@ -11,13 +11,13 @@
     }
   ],
   "type": "typo3-cms-extension",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "license": ["GPL-2.0-or-later"],
   "require": {
     "php": "^8.2",
-    "typo3/cms-core": "^13.0 || ^14.0",
-    "typo3/cms-fluid": "^13.0 || ^14.0",
-    "typo3/cms-extbase": "^13.0 || ^14.0",
+    "typo3/cms-core": "^13.4 || ^14.0",
+    "typo3/cms-fluid": "^13.4 || ^14.0",
+    "typo3/cms-extbase": "^13.4 || ^14.0",
     "typo3/cms-fluid-styled-content": "^13.0 || ^14.0"
   },
   "autoload": {
