@@ -27,6 +27,21 @@ call_user_func(static function (): void {
         pluginType: ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
     );
 
+    // Legacy scheduler task registration (TYPO3 13.4 + 14.x).
+    //
+    // Deprecated in TYPO3 14 by #98453 in favour of native task types defined
+    // via TCA on the new `tx_scheduler_task` table (registered through
+    // `Configuration/TCA/Overrides/scheduler_*.php` with
+    // `ExtensionManagementUtility::addRecordType()` and a task class that
+    // implements `getTaskParameters()` / `setTaskParameters()`). That
+    // replacement was *introduced* in TYPO3 14.0 and does not exist on 13.4,
+    // so as long as this extension supports `^13.4 || ^14.0` we keep the
+    // legacy registration here. To migrate when 13.4 support is dropped:
+    //   1. Move the registration to `Configuration/TCA/Overrides/scheduler_mpc_rss_update_feeds_task.php`.
+    //   2. Convert `UpdateFeedsTask` to declare its parameters as protected
+    //      properties + implement `setTaskParameters()` / `getTaskParameters()`.
+    //   3. Delete `UpdateFeedsTaskAdditionalFieldProvider`.
+    // @extensionScannerIgnoreLine
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][UpdateFeedsTask::class] = [
         'extension' => 'mpc_rss',
         'title' => 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang.xlf:scheduler.task.title',

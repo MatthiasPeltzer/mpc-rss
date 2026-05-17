@@ -96,7 +96,14 @@ class FeedController extends ActionController
 
     public function listAction(): ResponseInterface
     {
+        // Read the current content element record from the `currentContentObject`
+        // request attribute (TYPO3 13.0+, see Feature #100147). The `->data`
+        // property is `ContentObjectRenderer::$data` (still `public array $data`
+        // in 14.x); the TYPO3 Extension Scanner flags every `->data` property
+        // fetch because `GifBuilder->data` was made protected in #101955, which
+        // is a false positive for an unrelated receiver.
         $currentContentObject = $this->request->getAttribute('currentContentObject');
+        // @extensionScannerIgnoreLine
         $data = $currentContentObject?->data ?? [];
         $contentUid = (int)($data['uid'] ?? 0);
 

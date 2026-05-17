@@ -5,15 +5,28 @@ declare(strict_types=1);
 namespace Mpc\MpcRss\Task;
 
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+// @extensionScannerIgnoreLine
 use TYPO3\CMS\Scheduler\AbstractAdditionalFieldProvider;
 use TYPO3\CMS\Scheduler\Controller\SchedulerModuleController;
 use TYPO3\CMS\Scheduler\Task\AbstractTask;
 
 /**
  * Additional fields provider for UpdateFeedsTask
- * 
+ *
  * Provides configuration options in the TYPO3 Scheduler backend module.
+ *
+ * NOTE on TYPO3 14 deprecation #98453:
+ * `\TYPO3\CMS\Scheduler\AbstractAdditionalFieldProvider` and the matching
+ * registration via `$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks']`
+ * are deprecated in TYPO3 14 and will be removed in v15. The replacement is
+ * the native TCA-based scheduler task API (table `tx_scheduler_task`,
+ * `getTaskParameters()` / `setTaskParameters()`), which was *introduced* in
+ * TYPO3 14 and does not exist on 13.4. As long as this extension supports
+ * both `^13.4 || ^14.0`, we deliberately keep the legacy `AbstractAdditionalFieldProvider`
+ * implementation. The migration to TCA-based task types should happen as soon
+ * as the 13.4 compatibility constraint is dropped.
  */
+// @extensionScannerIgnoreLine
 class UpdateFeedsTaskAdditionalFieldProvider extends AbstractAdditionalFieldProvider
 {
     /**
