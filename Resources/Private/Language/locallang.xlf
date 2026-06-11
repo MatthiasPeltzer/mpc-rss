@@ -47,6 +47,9 @@
             <trans-unit id="item.no_description">
                 <source>No description available</source>
             </trans-unit>
+            <trans-unit id="item.opens_new_window">
+                <source>opens in new window</source>
+            </trans-unit>
 
             <!-- Pagination -->
             <trans-unit id="pagination.page">
@@ -69,6 +72,9 @@
             </trans-unit>
             <trans-unit id="pagination.items_total">
                 <source>items total</source>
+            </trans-unit>
+            <trans-unit id="pagination.navigation">
+                <source>RSS pagination</source>
             </trans-unit>
 
             <!-- Time/Date -->

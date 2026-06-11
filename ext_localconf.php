@@ -15,13 +15,14 @@ call_user_func(static function (): void {
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['mpc_rss']['frontend'] ??= VariableFrontend::class;
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['mpc_rss']['backend'] ??= Typo3DatabaseBackend::class;
 
+    // The `list` action is cacheable: feed payloads live in the dedicated
+    // `mpc_rss` cache, and the `filterCategory` / `page` arguments become part
+    // of the cHash (see `requireCHashArgumentForActionArguments` in the
+    // TypoScript setup), so TYPO3 caches one rendered variant per filter/page.
     ExtensionUtility::configurePlugin(
         extensionName: 'MpcRss',
         pluginName: 'Feed',
         controllerActions: [
-            FeedController::class => 'list',
-        ],
-        nonCacheableControllerActions: [
             FeedController::class => 'list',
         ],
         pluginType: ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT

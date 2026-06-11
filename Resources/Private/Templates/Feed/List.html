@@ -7,7 +7,7 @@
         <f:if condition="{grouped}">
           <f:then>
             <f:if condition="{showFilter}">
-              <nav class="rss-categories mb-3" role="navigation" aria-label="{navigationLabel}">
+              <nav class="rss-categories mb-3" aria-label="{navigationLabel}">
                 <f:comment><!-- Navigation label changes based on grouping mode --></f:comment>
                 <f:if condition="{navigationLabel}">
                   <h3 class="h6 text-muted mb-2">
@@ -22,32 +22,37 @@
                 <ul class="nav nav-pills flex-wrap gap-2" data-grouping-mode="{groupingMode}">
                   <f:for each="{categories}" as="cat">
                     <li class="nav-item">
-                      <f:link.action class="nav-link {f:if(condition: '{cat} == {activeCategory}', then: 'active')}" action="list" arguments="{filterCategory: cat}" title="{cat}">
-                        {cat}
-                      </f:link.action>
+                      <f:if condition="{cat} == {activeCategory}">
+                        <f:then>
+                          <f:link.action class="nav-link active" aria-current="true" action="list" arguments="{filterCategory: cat}">{cat}</f:link.action>
+                        </f:then>
+                        <f:else>
+                          <f:link.action class="nav-link" action="list" arguments="{filterCategory: cat}">{cat}</f:link.action>
+                        </f:else>
+                      </f:if>
                     </li>
                   </f:for>
                 </ul>
               </nav>
             </f:if>
-            <f:for each="{grouped}" as="entries" key="category">
-              <section class="rss-category mb-4">
-                <h2 id="cat-{f:format.htmlspecialchars(value: category)}" class="h5 mb-3">{category}</h2>
+            <f:for each="{grouped}" as="entries" key="category" iteration="groupIteration">
+              <section class="rss-category mb-4" aria-labelledby="rss-group-{groupIteration.cycle}">
+                <h2 id="rss-group-{groupIteration.cycle}" class="h5 mb-3">{category}</h2>
                 <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
                   <f:for each="{entries}" as="entry">
                     <div class="col">
                       <div class="card h-100 position-relative">
                         <f:if condition="{entry.image}">
                           <f:then>
-                            <a href="{entry.link}" target="_blank" rel="noopener noreferrer">
-                              <img src="{entry.image}" class="card-img-top" alt="{entry.title}" loading="lazy" />
+                            <a href="{entry.link}" target="_blank" rel="noopener noreferrer" aria-hidden="true" tabindex="-1">
+                              <img src="{entry.image}" class="card-img-top" alt="" loading="lazy" />
                             </a>
                           </f:then>
                           <f:else />
                         </f:if>
                         <div class="card-body">
                           <h3 class="card-title h6 mb-2">
-                            <a href="{entry.link}" target="_blank" rel="noopener noreferrer" class="stretched-link text-decoration-none">{entry.title}</a>
+                            <a href="{entry.link}" target="_blank" rel="noopener noreferrer" class="stretched-link text-decoration-none">{entry.title}<span class="visually-hidden"> (<f:translate key="item.opens_new_window" default="opens in new window" />)</span></a>
                           </h3>
                           <div class="card-text small text-body-secondary mb-2">
                             <f:if condition="{entry.date}">
@@ -70,27 +75,36 @@
               </section>
             </f:for>
             <f:if condition="{paginate} && {pagination}">
-              <nav class="pagination mt-3" aria-label="RSS pagination">
+              <nav class="rss-pagination mt-3" aria-label="{f:translate(key: 'pagination.navigation', default: 'RSS pagination')}">
                 <ul class="pagination">
                   <f:if condition="{pagination.page} > 1">
                     <li class="page-item">
-                      <f:link.action class="page-link" action="list" arguments="{page: 1, filterCategory: pagination.activeCategory}">«</f:link.action>
+                      <f:link.action class="page-link" aria-label="{f:translate(key: 'pagination.first', default: 'First')}" action="list" arguments="{page: 1, filterCategory: pagination.activeCategory}"><span aria-hidden="true">&#171;</span></f:link.action>
                     </li>
                     <li class="page-item">
-                      <f:link.action class="page-link" action="list" arguments="{page: '{pagination.page - 1}', filterCategory: pagination.activeCategory}">‹</f:link.action>
+                      <f:link.action class="page-link" aria-label="{f:translate(key: 'pagination.previous', default: 'Previous')}" action="list" arguments="{page: '{pagination.page - 1}', filterCategory: pagination.activeCategory}"><span aria-hidden="true">&#8249;</span></f:link.action>
                     </li>
                   </f:if>
                   <f:for each="{pages}" as="p">
-                    <li class="page-item {f:if(condition: '{p} == {pagination.page}', then: 'active')}">
-                      <f:link.action class="page-link" action="list" arguments="{page: p, filterCategory: pagination.activeCategory}">{p}</f:link.action>
-                    </li>
+                    <f:if condition="{p} == {pagination.page}">
+                      <f:then>
+                        <li class="page-item active" aria-current="page">
+                          <span class="page-link">{p}</span>
+                        </li>
+                      </f:then>
+                      <f:else>
+                        <li class="page-item">
+                          <f:link.action class="page-link" action="list" arguments="{page: p, filterCategory: pagination.activeCategory}">{p}</f:link.action>
+                        </li>
+                      </f:else>
+                    </f:if>
                   </f:for>
                   <f:if condition="{pagination.page} < {pagination.numPages}">
                     <li class="page-item">
-                      <f:link.action class="page-link" action="list" arguments="{page: '{pagination.page + 1}', filterCategory: pagination.activeCategory}">›</f:link.action>
+                      <f:link.action class="page-link" aria-label="{f:translate(key: 'pagination.next', default: 'Next')}" action="list" arguments="{page: '{pagination.page + 1}', filterCategory: pagination.activeCategory}"><span aria-hidden="true">&#8250;</span></f:link.action>
                     </li>
                     <li class="page-item">
-                      <f:link.action class="page-link" action="list" arguments="{page: pagination.numPages, filterCategory: pagination.activeCategory}">»</f:link.action>
+                      <f:link.action class="page-link" aria-label="{f:translate(key: 'pagination.last', default: 'Last')}" action="list" arguments="{page: pagination.numPages, filterCategory: pagination.activeCategory}"><span aria-hidden="true">&#187;</span></f:link.action>
                     </li>
                   </f:if>
                 </ul>
@@ -98,14 +112,14 @@
             </f:if>
           </f:then>
           <f:else>
-            <div class="alert alert-info" role="alert">
+            <div class="alert alert-info" role="status">
               <f:translate key="LLL:EXT:mpc_rss/Resources/Private/Language/locallang.xlf:rss.no_items">No items found in the selected feeds.</f:translate>
             </div>
           </f:else>
         </f:if>
       </f:then>
       <f:else>
-        <div class="alert alert-warning" role="alert">
+        <div class="alert alert-warning" role="status">
           <strong><f:translate key="LLL:EXT:mpc_rss/Resources/Private/Language/locallang.xlf:rss.no_feeds">No RSS feeds configured. Please add feeds in the content element.</f:translate></strong>
         </div>
       </f:else>

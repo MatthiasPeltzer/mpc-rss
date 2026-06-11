@@ -94,8 +94,12 @@ class UpdateFeedsCommand extends Command
 
         foreach ($urls as $url) {
             try {
-                $this->feedService->warmCache($url, $cacheLifetime, $sourceNames);
-                $successCount++;
+                if ($this->feedService->warmCache($url, $cacheLifetime, $sourceNames)) {
+                    $successCount++;
+                } else {
+                    $errorCount++;
+                    $errors[] = sprintf('Failed to fetch or parse %s', $url);
+                }
             } catch (\Throwable $e) {
                 $errorCount++;
                 $errors[] = sprintf('Failed to update %s: %s', $url, $e->getMessage());

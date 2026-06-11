@@ -33,6 +33,12 @@ class FeedService implements LoggerAwareInterface
     private const DEFAULT_GROUP = 'General';
     private const UNKNOWN_SOURCE = 'Unknown Source';
     private const DEFAULT_SOURCE = 'RSS';
+
+    /** Maximum number of bytes read from a remote feed before aborting. */
+    private const MAX_FEED_BYTES = 5_242_880;
+
+    /** Maximum number of redirects followed when fetching a feed. */
+    private const MAX_REDIRECTS = 3;
     private const DATE_LABELS = [
         'noDate' => 'No Date',
         'today' => 'Today',
@@ -59,10 +65,11 @@ class FeedService implements LoggerAwareInterface
      * Warm the cache for a single feed URL without grouping or sorting.
      *
      * @param array<string, string> $sourceNames
+     * @return bool True when the feed was fetched and parsed (or served from cache), false on failure.
      */
-    public function warmCache(string $url, int $cacheLifetime, array $sourceNames = []): void
+    public function warmCache(string $url, int $cacheLifetime, array $sourceNames = []): bool
     {
-        $this->fetchFeedItems($url, $cacheLifetime, $sourceNames);
+        return $this->fetchFeedItems($url, $cacheLifetime, $sourceNames) !== null;
     }
 
     /**
@@ -81,7 +88,10 @@ class FeedService implements LoggerAwareInterface
     ): array {
         $items = [];
         foreach ($urls as $url) {
-            array_push($items, ...$this->fetchFeedItems($url, $cacheLifetime, $sourceNames));
+            $fetched = $this->fetchFeedItems($url, $cacheLifetime, $sourceNames);
+            if ($fetched !== null && $fetched !== []) {
+                array_push($items, ...$fetched);
+            }
         }
 
         $items = $this->deduplicateItems($items);
@@ -94,9 +104,9 @@ class FeedService implements LoggerAwareInterface
      * Fetch and parse a single feed URL, returning cached items when available.
      *
      * @param array<string, string> $sourceNames
-     * @return list<array<string, mixed>>
+     * @return list<array<string, mixed>>|null Items on success (possibly empty), null on fetch/parse failure.
      */
-    private function fetchFeedItems(string $url, int $cacheLifetime, array $sourceNames): array
+    private function fetchFeedItems(string $url, int $cacheLifetime, array $sourceNames): ?array
     {
         $cacheIdentifier = 'feed_' . md5($url);
         $feedData = $this->getCache()->get($cacheIdentifier);
@@ -104,19 +114,32 @@ class FeedService implements LoggerAwareInterface
             return $feedData;
         }
 
+        if (!$this->isAllowedFeedUrl($url)) {
+            $this->logger?->warning('Refusing to fetch RSS feed from a disallowed or non-public URL', ['url' => $url]);
+            $this->cacheNegativeResult($cacheIdentifier, $cacheLifetime);
+            return null;
+        }
+
         try {
             $response = $this->requestFactory->request($url, 'GET', [
                 'headers' => [
-                    'User-Agent' => 'MPC RSS TYPO3/13',
+                    'User-Agent' => 'MPC RSS TYPO3',
                     'Accept' => 'application/rss+xml, application/atom+xml;q=0.95, application/xml;q=0.9, */*;q=0.8',
                 ],
                 'timeout' => 10,
                 'connect_timeout' => 6,
+                'allow_redirects' => [
+                    'max' => self::MAX_REDIRECTS,
+                    'strict' => true,
+                    'referer' => false,
+                    'protocols' => ['http', 'https'],
+                ],
+                'stream' => true,
             ]);
         } catch (\Throwable $exception) {
             $this->logger?->warning('Fetching RSS feed failed', ['url' => $url, 'exception' => $exception]);
             $this->cacheNegativeResult($cacheIdentifier, $cacheLifetime);
-            return [];
+            return null;
         }
 
         if ($response->getStatusCode() !== 200) {
@@ -125,14 +148,19 @@ class FeedService implements LoggerAwareInterface
                 'statusCode' => $response->getStatusCode(),
             ]);
             $this->cacheNegativeResult($cacheIdentifier, $cacheLifetime);
-            return [];
+            return null;
         }
 
-        $body = (string)$response->getBody();
+        $body = $this->readBoundedBody($response->getBody());
+        if ($body === null) {
+            $this->logger?->warning('RSS feed exceeded the maximum allowed size', ['url' => $url, 'maxBytes' => self::MAX_FEED_BYTES]);
+            $this->cacheNegativeResult($cacheIdentifier, $cacheLifetime);
+            return null;
+        }
         if ($body === '') {
             $this->logger?->warning('Fetching RSS feed returned empty body', ['url' => $url]);
             $this->cacheNegativeResult($cacheIdentifier, $cacheLifetime);
-            return [];
+            return null;
         }
 
         $previousErrors = libxml_use_internal_errors(true);
@@ -143,7 +171,7 @@ class FeedService implements LoggerAwareInterface
         if ($xml === false) {
             $this->logger?->warning('Failed to parse RSS feed XML', ['url' => $url]);
             $this->cacheNegativeResult($cacheIdentifier, $cacheLifetime);
-            return [];
+            return null;
         }
 
         $feedItems = $this->getXmlChild($xml->channel ?? null, 'item') !== null
@@ -155,6 +183,92 @@ class FeedService implements LoggerAwareInterface
         }
 
         return $feedItems;
+    }
+
+    /**
+     * Read a response body up to MAX_FEED_BYTES, returning null when the limit is exceeded.
+     */
+    private function readBoundedBody(\Psr\Http\Message\StreamInterface $stream): ?string
+    {
+        $body = '';
+        while (!$stream->eof()) {
+            $chunk = $stream->read(8192);
+            if ($chunk === '') {
+                break;
+            }
+            $body .= $chunk;
+            if (strlen($body) > self::MAX_FEED_BYTES) {
+                return null;
+            }
+        }
+        return $body;
+    }
+
+    /**
+     * Guard against SSRF: only allow http(s) URLs that resolve to public IP addresses.
+     */
+    private function isAllowedFeedUrl(string $url): bool
+    {
+        $parts = parse_url($url);
+        if ($parts === false || !isset($parts['scheme'], $parts['host'])) {
+            return false;
+        }
+        if (!in_array(strtolower($parts['scheme']), ['http', 'https'], true)) {
+            return false;
+        }
+
+        $host = trim($parts['host'], '[]');
+        $ips = $this->resolveHostIps($host);
+        if ($ips === []) {
+            return false;
+        }
+
+        foreach ($ips as $ip) {
+            if (!$this->isPublicIp($ip)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function resolveHostIps(string $host): array
+    {
+        if (filter_var($host, FILTER_VALIDATE_IP) !== false) {
+            return [$host];
+        }
+
+        $ips = [];
+        $records = @dns_get_record($host, DNS_A | DNS_AAAA);
+        if (is_array($records)) {
+            foreach ($records as $record) {
+                if (isset($record['ip'])) {
+                    $ips[] = (string)$record['ip'];
+                } elseif (isset($record['ipv6'])) {
+                    $ips[] = (string)$record['ipv6'];
+                }
+            }
+        }
+
+        if ($ips === []) {
+            $resolved = @gethostbyname($host);
+            if ($resolved !== $host && filter_var($resolved, FILTER_VALIDATE_IP) !== false) {
+                $ips[] = $resolved;
+            }
+        }
+
+        return $ips;
+    }
+
+    private function isPublicIp(string $ip): bool
+    {
+        return filter_var(
+            $ip,
+            FILTER_VALIDATE_IP,
+            FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE,
+        ) !== false;
     }
 
     /**
