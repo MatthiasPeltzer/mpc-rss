@@ -78,5 +78,24 @@
     font-weight: 600;
 }
 
+/* Keyboard focus visibility (independent of theme) */
+.rss-feed a:focus-visible,
+.rss-categories .nav-link:focus-visible,
+.rss-pagination .page-link:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .rss-categories .nav-link .badge {
+        transition: none;
+    }
+
+    .rss-categories .nav-link:hover .badge {
+        transform: none;
+    }
+}
+
 
 

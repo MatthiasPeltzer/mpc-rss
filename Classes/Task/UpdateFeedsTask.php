@@ -41,17 +41,21 @@ class UpdateFeedsTask extends AbstractTask
                 }
             }
 
+            $hadFailure = false;
             foreach ($feedRecords as $record) {
                 try {
-                    $feedService->warmCache($record['feed_url'], $this->cacheLifetime, $sourceNames);
+                    if (!$feedService->warmCache($record['feed_url'], $this->cacheLifetime, $sourceNames)) {
+                        $hadFailure = true;
+                    }
                 } catch (\Throwable $e) {
+                    $hadFailure = true;
                     $this->logException(
                         $e instanceof \Exception ? $e : new \Exception($e->getMessage(), (int)$e->getCode(), $e)
                     );
                 }
             }
 
-            return true;
+            return !$hadFailure;
         } catch (\Throwable $e) {
             $this->logException(
                 $e instanceof \Exception ? $e : new \Exception($e->getMessage(), (int)$e->getCode(), $e)

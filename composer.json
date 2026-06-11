@@ -25,6 +25,17 @@
       "Mpc\\MpcRss\\": "Classes/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Mpc\\MpcRss\\Tests\\": "Tests/"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^11.5"
+  },
+  "scripts": {
+    "test:unit": "phpunit -c phpunit.xml.dist"
+  },
   "extra": {
     "typo3/cms": {
       "extension-key": "mpc_rss"
