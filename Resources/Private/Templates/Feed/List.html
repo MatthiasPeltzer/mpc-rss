@@ -44,15 +44,13 @@
                       <div class="card h-100 position-relative">
                         <f:if condition="{entry.image}">
                           <f:then>
-                            <a href="{entry.link}" target="_blank" rel="noopener noreferrer" aria-hidden="true" tabindex="-1">
-                              <img src="{entry.image}" class="card-img-top" alt="" loading="lazy" />
-                            </a>
+                            <img src="{entry.image}" class="card-img-top" alt="" loading="lazy" />
                           </f:then>
                           <f:else />
                         </f:if>
                         <div class="card-body">
                           <h3 class="card-title h6 mb-2">
-                            <a href="{entry.link}" target="_blank" rel="noopener noreferrer" class="stretched-link text-decoration-none">{entry.title}<span class="visually-hidden"> (<f:translate key="item.opens_new_window" default="opens in new window" />)</span></a>
+                            <a href="{entry.link}" target="_blank" rel="noopener noreferrer" class="stretched-link text-decoration-none">{entry.title}</a>
                           </h3>
                           <div class="card-text small text-body-secondary mb-2">
                             <f:if condition="{entry.date}">

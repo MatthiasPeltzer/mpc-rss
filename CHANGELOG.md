@@ -24,8 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   parsing fails, instead of always reporting success.
 
 ### Accessibility
-- Article cards now expose a single link (the decorative image link is hidden
-  from assistive technology) and announce that links open in a new window.
+- Article cards now expose a single card-wide link via `stretched-link`; the
+  separate image link was removed so screen readers no longer announce two
+  links per card.
 - Pagination controls have translated accessible labels, the current page uses
   `aria-current="page"`, and the active filter pill uses `aria-current`.
 - Section headings use stable ids wired via `aria-labelledby`; static empty
