@@ -47,9 +47,6 @@
             <trans-unit id="item.no_description">
                 <source>No description available</source>
             </trans-unit>
-            <trans-unit id="item.opens_new_window">
-                <source>opens in new window</source>
-            </trans-unit>
 
             <!-- Pagination -->
             <trans-unit id="pagination.page">

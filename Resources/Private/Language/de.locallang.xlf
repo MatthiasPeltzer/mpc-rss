@@ -60,10 +60,6 @@
                 <source>No description available</source>
                 <target>Keine Beschreibung verfügbar</target>
             </trans-unit>
-            <trans-unit id="item.opens_new_window">
-                <source>opens in new window</source>
-                <target>öffnet in neuem Fenster</target>
-            </trans-unit>
 
             <!-- Pagination -->
             <trans-unit id="pagination.page">
