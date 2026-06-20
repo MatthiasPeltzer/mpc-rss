@@ -6,16 +6,14 @@
 }
 
 /**
- * Grouping Mode Styles for MPC RSS
- * Customize navigation appearance based on grouping mode
+ * Filter navigation for MPC RSS.
+ * Appearance adapts to the active grouping mode via [data-grouping-mode].
  */
-
-/* Base navigation styles */
-.rss-categories[role="navigation"] {
+.rss-categories {
     margin-bottom: 1.5rem;
 }
 
-.rss-categories h3 {
+.rss-categories h2 {
     font-size: 0.875rem;
     font-weight: 600;
     letter-spacing: 0.05em;
@@ -35,17 +33,9 @@
     font-weight: 500;
 }
 
-.rss-categories ul[data-grouping-mode="source"] .nav-link .badge {
-    background-color: #6c757d !important;
-}
-
 .rss-categories ul[data-grouping-mode="date"] .nav-link {
     min-width: 120px;
     text-align: center;
-}
-
-.rss-categories ul[data-grouping-mode="date"] .nav-link .badge {
-    background-color: #17a2b8 !important;
 }
 
 /* Responsive adjustments */
@@ -64,15 +54,6 @@
     }
 }
 
-/* Icon badge animations */
-.rss-categories .nav-link .badge {
-    transition: transform 0.2s ease;
-}
-
-.rss-categories .nav-link:hover .badge {
-    transform: scale(1.1);
-}
-
 /* Active state enhancements */
 .rss-categories .nav-link.active {
     font-weight: 600;
@@ -85,17 +66,3 @@
     outline: 2px solid currentColor;
     outline-offset: 2px;
 }
-
-/* Respect users who prefer reduced motion */
-@media (prefers-reduced-motion: reduce) {
-    .rss-categories .nav-link .badge {
-        transition: none;
-    }
-
-    .rss-categories .nav-link:hover .badge {
-        transform: none;
-    }
-}
-
-
-

@@ -230,6 +230,14 @@ final class FeedServiceTest extends TestCase
             'ipv6 loopback literal is blocked' => ['http://[::1]/feed.xml', false],
             'non-http scheme is blocked' => ['ftp://example.com/feed.xml', false],
             'javascript scheme is blocked' => ['javascript:alert(1)', false],
+            'localhost hostname is blocked' => ['http://localhost/feed.xml', false],
+            'localhost with port is blocked' => ['http://localhost:8080/feed.xml', false],
+            '127.0.0.1 hostname is blocked' => ['http://127.0.0.1/feed.xml', false],
+            'private network 10.x is blocked' => ['http://10.1.2.3/feed.xml', false],
+            'private network 192.168.x is blocked' => ['http://192.168.1.1/feed.xml', false],
+            'private network 172.16-31.x is blocked' => ['http://172.16.0.1/feed.xml', false],
+            'link-local 169.254.x is blocked' => ['http://169.254.1.1/feed.xml', false],
+            'TEST-NET 192.0.2.x is blocked' => ['http://192.0.2.1/feed.xml', false],
         ];
     }
 
@@ -237,5 +245,122 @@ final class FeedServiceTest extends TestCase
     public function testIsAllowedFeedUrl(string $url, bool $expected): void
     {
         self::assertSame($expected, $this->invoke('isAllowedFeedUrl', $url));
+    }
+
+    public function testParseXmlSafelyDoesNotResolveExternalEntities(): void
+    {
+        $maliciousXml = '<?xml version="1.0"?>
+            <!DOCTYPE rss [
+                <!ENTITY xxe SYSTEM "file:///etc/passwd">
+            ]>
+            <rss><channel><title>&xxe;</title></channel></rss>';
+
+        $result = $this->invoke('parseXmlSafely', $maliciousXml);
+
+        // The external entity must never be resolved into the parsed document:
+        // either parsing fails (null) or the title is empty.
+        self::assertTrue($result === null || (string)$result->channel->title === '');
+    }
+
+    public function testParseXmlSafelyDoesNotExpandBillionLaughs(): void
+    {
+        $maliciousXml = '<?xml version="1.0"?>
+            <!DOCTYPE lolz [
+                <!ENTITY lol "lol">
+                <!ENTITY lol2 "&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;">
+                <!ENTITY lol3 "&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;">
+            ]>
+            <rss><channel><title>&lol3;</title></channel></rss>';
+
+        $result = $this->invoke('parseXmlSafely', $maliciousXml);
+
+        // Without LIBXML_NOENT entities are not expanded, so the title stays tiny.
+        self::assertTrue($result === null || strlen((string)$result->channel->title) < 100);
+    }
+
+    public function testParseXmlSafelyRefusesNetworkEntities(): void
+    {
+        $maliciousXml = '<?xml version="1.0"?>
+            <!DOCTYPE rss [
+                <!ENTITY external SYSTEM "https://evil.example/malicious.dtd">
+            ]>
+            <rss><channel><title>&external;</title></channel></rss>';
+
+        $result = $this->invoke('parseXmlSafely', $maliciousXml);
+
+        self::assertTrue($result === null || (string)$result->channel->title === '');
+    }
+
+    public function testParseXmlSafelyParsesValidFeed(): void
+    {
+        $xml = '<?xml version="1.0"?><rss><channel><item><title>Hello</title></item></channel></rss>';
+
+        $result = $this->invoke('parseXmlSafely', $xml);
+
+        self::assertNotNull($result);
+        self::assertSame('Hello', (string)$result->channel->item->title);
+    }
+
+    public function testWarmCacheRejectsExcessivelyLongUrl(): void
+    {
+        $longUrl = 'https://example.com/' . str_repeat('a', 2050);
+        self::assertFalse($this->invoke('warmCache', $longUrl, 3600, []));
+    }
+
+    /**
+     * @return array<string, array{0: string, 1: list<string>, 2: string}>
+     */
+    public static function curlResolveProvider(): array
+    {
+        return [
+            'https uses default port 443' => ['https://example.com/feed', ['1.2.3.4'], 'example.com:443:1.2.3.4'],
+            'http uses default port 80' => ['http://example.com/feed', ['1.2.3.4'], 'example.com:80:1.2.3.4'],
+            'explicit port is respected' => ['https://example.com:8443/feed', ['1.2.3.4'], 'example.com:8443:1.2.3.4'],
+            'multiple ips are comma-joined' => ['https://example.com/feed', ['1.2.3.4', '2606:4700::1111'], 'example.com:443:1.2.3.4,2606:4700::1111'],
+        ];
+    }
+
+    /**
+     * @param list<string> $ips
+     */
+    #[DataProvider('curlResolveProvider')]
+    public function testBuildCurlResolveOption(string $url, array $ips, string $expectedEntry): void
+    {
+        if (!defined('CURLOPT_RESOLVE')) {
+            self::markTestSkipped('ext-curl is not loaded, CURLOPT_RESOLVE is unavailable.');
+        }
+
+        $option = $this->invoke('buildCurlResolveOption', $url, $ips);
+
+        self::assertSame([CURLOPT_RESOLVE => [$expectedEntry]], $option);
+    }
+
+    public function testBuildCurlResolveOptionReturnsEmptyWithoutCurl(): void
+    {
+        if (defined('CURLOPT_RESOLVE')) {
+            self::markTestSkipped('ext-curl is loaded, the no-curl fallback cannot be exercised here.');
+        }
+
+        self::assertSame([], $this->invoke('buildCurlResolveOption', 'https://example.com/feed', ['1.2.3.4']));
+    }
+
+    /**
+     * @return array<string, array{0: string, 1: string, 2: ?string}>
+     */
+    public static function redirectLocationProvider(): array
+    {
+        return [
+            'absolute https kept' => ['https://a.example/feed', 'https://b.example/other', 'https://b.example/other'],
+            'relative path resolves against current url' => ['https://a.example/news/feed', '/rss/latest', 'https://a.example/rss/latest'],
+            'protocol-relative inherits scheme' => ['https://a.example/feed', '//b.example/x', 'https://b.example/x'],
+            'non-http scheme is rejected' => ['https://a.example/feed', 'ftp://b.example/x', null],
+            'javascript scheme is rejected' => ['https://a.example/feed', 'javascript:alert(1)', null],
+        ];
+    }
+
+    #[DataProvider('redirectLocationProvider')]
+    public function testResolveRedirectLocation(string $currentUrl, string $location, ?string $expected): void
+    {
+        self::assertSame($expected, $this->invoke('resolveRedirectLocation', $currentUrl, $location));
     }
 }

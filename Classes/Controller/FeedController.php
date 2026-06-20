@@ -10,7 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
-class FeedController extends ActionController
+final class FeedController extends ActionController
 {
     private const EXT_NAME = 'MpcRss';
 
@@ -115,6 +115,11 @@ class FeedController extends ActionController
         $showFilter = $showFilterSetting === '' ? true : (bool)$showFilterSetting;
         $paginate = (bool)$this->getSetting($data, 'tx_mpcrss_paginate', 'paginate', false);
         $paginateCategory = (string)($this->settings['paginateCategory'] ?? '');
+        // Ignore an unresolved TypoScript constant placeholder (e.g. when a site set
+        // setting has not been wired/flushed) so it cannot become the active category.
+        if (str_starts_with($paginateCategory, '{$')) {
+            $paginateCategory = '';
+        }
         $itemsPerPage = max(1, (int)$this->getSetting($data, 'tx_mpcrss_items_per_page', 'itemsPerPage', 10));
         $defaultCategory = (string)$this->getSetting($data, 'tx_mpcrss_default_category', 'defaultCategory', 'Politik');
         $groupingMode = (string)$this->getSetting($data, 'tx_mpcrss_grouping_mode', 'groupingMode', 'category');
@@ -138,6 +143,13 @@ class FeedController extends ActionController
             } else {
                 $activeCategory = $allCategories[0] ?? '';
             }
+        }
+
+        // Defensive: an active category that is not an actual group (e.g. a hand-crafted
+        // filterCategory argument or a stale paginate category) must not hide every
+        // group. Fall back to the first available group instead.
+        if ($activeCategory !== '' && !isset($grouped[$activeCategory])) {
+            $activeCategory = $allCategories[0] ?? '';
         }
 
         $navigationLabel = $this->getNavigationLabel($groupingMode);
@@ -167,6 +179,7 @@ class FeedController extends ActionController
         }
 
         $this->view->assignMultiple([
+            'contentUid' => $contentUid,
             'grouped' => $grouped,
             'categories' => $allCategories,
             'activeCategory' => $activeCategory,

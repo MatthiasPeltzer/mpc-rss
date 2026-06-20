@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Mpc\MpcRss\Preview\FeedPreviewRenderer;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;

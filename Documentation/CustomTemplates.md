@@ -71,9 +71,7 @@ your_sitepackage/Resources/Private/
           <time datetime="{item.date}"><f:format.date date="{item.date}" format="d.m.Y" /></time>
         </f:if>
         <p>
-          <f:format.stripTags>
-            <f:format.crop maxCharacters="200" append="…">{item.description}</f:format.crop>
-          </f:format.stripTags>
+          <f:format.crop maxCharacters="200" append="…"><f:format.stripTags>{item.description}</f:format.stripTags></f:format.crop>
         </p>
       </article>
     </f:for>

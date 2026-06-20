@@ -10,14 +10,14 @@
               <nav class="rss-categories mb-3" aria-label="{navigationLabel}">
                 <f:comment><!-- Navigation label changes based on grouping mode --></f:comment>
                 <f:if condition="{navigationLabel}">
-                  <h3 class="h6 text-muted mb-2">
+                  <p class="h6 text-muted mb-2">
                     <f:switch expression="{groupingMode}">
                       <f:case value="category"><f:translate key="navigation.filterByCategory" default="Filter by Category" /></f:case>
                       <f:case value="source"><f:translate key="navigation.filterBySource" default="Filter by Source" /></f:case>
                       <f:case value="date"><f:translate key="navigation.filterByDate" default="Filter by Date" /></f:case>
                       <f:defaultCase><f:translate key="navigation.filter" default="Filter" /></f:defaultCase>
                     </f:switch>
-                  </h3>
+                  </p>
                 </f:if>
                 <ul class="nav nav-pills flex-wrap gap-2" data-grouping-mode="{groupingMode}">
                   <f:for each="{categories}" as="cat">
@@ -36,8 +36,8 @@
               </nav>
             </f:if>
             <f:for each="{grouped}" as="entries" key="category" iteration="groupIteration">
-              <section class="rss-category mb-4" aria-labelledby="rss-group-{groupIteration.cycle}">
-                <h2 id="rss-group-{groupIteration.cycle}" class="h5 mb-3">{category}</h2>
+              <section class="rss-category mb-4" aria-labelledby="rss-group-{contentUid}-{groupIteration.cycle}">
+                <h2 id="rss-group-{contentUid}-{groupIteration.cycle}" class="h5 mb-3">{category}</h2>
                 <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
                   <f:for each="{entries}" as="entry">
                     <div class="col">
@@ -61,9 +61,7 @@
                             </f:if>
                           </div>
                           <div class="card-text">
-                            <f:format.stripTags>
-                              <f:format.crop maxCharacters="200" append="…">{entry.description}</f:format.crop>
-                            </f:format.stripTags>
+                            <f:format.crop maxCharacters="200" append="…"><f:format.stripTags>{entry.description}</f:format.stripTags></f:format.crop>
                           </div>
                         </div>
                       </div>
