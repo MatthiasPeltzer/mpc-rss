@@ -27,7 +27,7 @@ use TYPO3\CMS\Scheduler\Task\AbstractTask;
  * as the 13.4 compatibility constraint is dropped.
  */
 // @extensionScannerIgnoreLine
-class UpdateFeedsTaskAdditionalFieldProvider extends AbstractAdditionalFieldProvider
+final class UpdateFeedsTaskAdditionalFieldProvider extends AbstractAdditionalFieldProvider
 {
     /**
      * Gets additional fields to render in the form to add/edit a task

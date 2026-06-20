@@ -6,7 +6,7 @@ namespace Mpc\MpcRss\Domain\Model;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
-class Feed extends AbstractEntity
+final class Feed extends AbstractEntity
 {
     protected int $sysLanguageUid = 0;
     protected int $l10nParent = 0;

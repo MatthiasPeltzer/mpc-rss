@@ -21,7 +21,7 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
  *   vendor/bin/typo3 mpcrss:updatefeeds
  *   vendor/bin/typo3 mpcrss:updatefeeds --clear-cache
  */
-class UpdateFeedsCommand extends Command
+final class UpdateFeedsCommand extends Command
 {
     public function __construct(
         private readonly FeedService $feedService,
