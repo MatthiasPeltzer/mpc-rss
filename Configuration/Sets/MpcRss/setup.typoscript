@@ -11,6 +11,16 @@ plugin.tx_mpcrss {
     layoutRootPaths.20 = {$plugin.tx_mpcrss.view.layoutRootPath}
   }
   settings {
+    maxItems = {$plugin.tx_mpcrss.settings.maxItems}
+    cacheLifetime = {$plugin.tx_mpcrss.settings.cacheLifetime}
+    includeCategories = {$plugin.tx_mpcrss.settings.includeCategories}
+    excludeCategories = {$plugin.tx_mpcrss.settings.excludeCategories}
+    showCategoryFilter = {$plugin.tx_mpcrss.settings.showCategoryFilter}
+    paginate = {$plugin.tx_mpcrss.settings.paginate}
+    paginateCategory = {$plugin.tx_mpcrss.settings.paginateCategory}
+    itemsPerPage = {$plugin.tx_mpcrss.settings.itemsPerPage}
+    defaultCategory = {$plugin.tx_mpcrss.settings.defaultCategory}
+    groupingMode = {$plugin.tx_mpcrss.settings.groupingMode}
   }
   features {
     requireCHashArgumentForActionArguments = 1

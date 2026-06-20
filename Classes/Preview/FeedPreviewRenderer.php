@@ -11,7 +11,7 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class FeedPreviewRenderer extends StandardContentPreviewRenderer
+final class FeedPreviewRenderer extends StandardContentPreviewRenderer
 {
     private const LLL = 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_db.xlf:';
 

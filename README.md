@@ -60,6 +60,35 @@ Request
 - Service layer is language-neutral; the controller translates generated group labels via XLF
 - `warmCache()` skips grouping/sorting -- efficient for CLI and Scheduler
 
+## Content Security Policy
+
+Feed items can reference remote images (`entry.image`) and link out to external
+articles. Because feed image hosts are not known in advance, the extension ships a
+frontend policy (`Configuration/ContentSecurityPolicies.php`) that extends `img-src`
+with the `https:` scheme. If you prefer a tighter policy, override it in your site
+package to allow only the specific hosts your feeds serve images from, e.g.:
+
+```php
+use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Directive;
+use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Mutation;
+use TYPO3\CMS\Core\Security\ContentSecurityPolicy\MutationCollection;
+use TYPO3\CMS\Core\Security\ContentSecurityPolicy\MutationMode;
+use TYPO3\CMS\Core\Security\ContentSecurityPolicy\Scope;
+use TYPO3\CMS\Core\Security\ContentSecurityPolicy\SourceScheme;
+use TYPO3\CMS\Core\Type\Map;
+
+return Map::fromEntries([
+    Scope::frontend(),
+    new MutationCollection(
+        // Restrict to the specific feed image hosts you use rather than a wildcard.
+        new Mutation(MutationMode::Extend, Directive::ImgSrc, SourceScheme::https),
+    ),
+]);
+```
+
+The extension never emits inline scripts or styles, so no `script-src` / `style-src`
+relaxation is required.
+
 ## Documentation
 
 - [Automatic Feed Updates](Documentation/AutomaticFeedUpdates.md) -- Scheduler and CLI setup

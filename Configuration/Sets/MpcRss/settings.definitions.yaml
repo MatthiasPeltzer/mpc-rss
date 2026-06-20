@@ -70,6 +70,13 @@ settings:
     default: false
     category: mpcRss
 
+  plugin.tx_mpcrss.settings.paginateCategory:
+    label: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.paginateCategory.label'
+    description: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.paginateCategory.description'
+    type: string
+    default: ''
+    category: mpcRss
+
   plugin.tx_mpcrss.settings.itemsPerPage:
     label: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.itemsPerPage.label'
     description: 'LLL:EXT:mpc_rss/Resources/Private/Language/locallang_sitesettings.xlf:plugin.tx_mpcrss.settings.itemsPerPage.description'

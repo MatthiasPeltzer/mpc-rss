@@ -5,6 +5,55 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Security
+- Hardened XML parsing in `FeedService`: documents declaring a DTD (`<!DOCTYPE>`)
+  are now rejected, and parsing no longer requests entity substitution
+  (`LIBXML_NOENT`) or external DTD loading (`LIBXML_DTDLOAD`). This closes XXE and
+  entity-expansion ("billion laughs") vectors that the previous flag combination
+  did not actually prevent.
+- Outgoing feed requests are now pinned to the validated public IP(s) via
+  `CURLOPT_RESOLVE`, and redirects are followed manually so every hop is
+  re-validated and re-pinned. This closes the DNS-rebinding / TOCTOU window where
+  a host could resolve to a public address during validation and to an
+  internal/loopback address when the socket is actually opened.
+- External feed HTML is now sanitized with the TYPO3 `HtmlSanitizer` (restricted to
+  `a`, `p`, `br`, `strong`, `em`, `b`, `i`; `a[href]` limited to http(s)) instead of
+  a hand-rolled regex.
+
+### Fixed
+- Feed URL guard now actually rejects loopback/localhost hostnames up-front (the
+  previous `127.`/`0.0.0` pattern was anchored with `$` and never matched).
+- Successful-but-empty feeds are cached, so they are no longer re-fetched on every
+  request.
+- Frontend site settings (`maxItems`, `cacheLifetime`, grouping mode, etc.) are now
+  mapped into `plugin.tx_mpcrss.settings`, so they take effect as site-wide defaults.
+- Description teasers crop the plain text after stripping tags (previously cropping
+  ran first and could cut mid-tag).
+- Invalid (but non-empty) feed XML is now handled gracefully; the parse-failure
+  guard checked the wrong sentinel (`=== false` instead of `=== null`) and could
+  let an unparsable body through into a `TypeError`.
+- Removed dead `rss.css` rules (the `[role="navigation"]` selector and `.badge`
+  styles that had no matching markup) and aligned the navigation heading selector.
+
+### Accessibility
+- Filter navigation heading is now an `<h2>` so headings no longer descend
+  illogically (h3 before h2).
+- Group section ids include the content element uid to stay unique when multiple
+  RSS plugins appear on one page.
+
+### Added
+- `paginateCategory` site setting (with EN/DE labels).
+- Ships a default frontend Content Security Policy
+  (`Configuration/ContentSecurityPolicies.php`) that extends `img-src` with the
+  `https:` scheme for remote feed images; documented how to tighten it to specific
+  hosts in a site package.
+
+### Changed
+- Marked the extension's own classes `final` and added `declare(strict_types=1)` to
+  the remaining configuration files for consistency with the project conventions.
+
 ## [v1.2.0]
 
 ### Security

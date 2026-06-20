@@ -96,6 +96,14 @@
                 <source>Paginate items within a category</source>
                 <target>Einträge innerhalb einer Kategorie paginieren</target>
             </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.settings.paginateCategory.label">
+                <source>Pagination Category</source>
+                <target>Paginierungs-Kategorie</target>
+            </trans-unit>
+            <trans-unit id="plugin.tx_mpcrss.settings.paginateCategory.description">
+                <source>Restrict pagination to a single group/category by name (leave empty for the active one)</source>
+                <target>Paginierung auf eine einzelne Gruppe/Kategorie per Name beschränken (leer lassen für die aktive)</target>
+            </trans-unit>
             <trans-unit id="plugin.tx_mpcrss.settings.itemsPerPage.label">
                 <source>Items per Page</source>
                 <target>Einträge pro Seite</target>

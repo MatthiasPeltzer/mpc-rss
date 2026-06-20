@@ -11,7 +11,7 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 /**
  * @extends Repository<Feed>
  */
-class FeedRepository extends Repository
+final class FeedRepository extends Repository
 {
     public function initializeObject(): void
     {

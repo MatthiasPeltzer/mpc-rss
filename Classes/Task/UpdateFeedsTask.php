@@ -18,7 +18,7 @@ use TYPO3\CMS\Scheduler\Task\AbstractTask;
  * It fetches all configured RSS feeds and updates the cache, ensuring visitors always
  * see fresh content without waiting for feed fetching.
  */
-class UpdateFeedsTask extends AbstractTask
+final class UpdateFeedsTask extends AbstractTask
 {
     public int $cacheLifetime = 3600;
     public bool $clearCache = false;
