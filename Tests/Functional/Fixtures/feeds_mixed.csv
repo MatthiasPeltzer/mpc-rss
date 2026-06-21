@@ -1,0 +1,4 @@
+"tx_mpcrss_domain_model_feed"
+,"uid","pid","tt_content","title","feed_url","source_name","hidden","deleted"
+,1,1,100,"Good","https://good.example/feed","Good",0,0
+,2,1,100,"Blocked","http://127.0.0.1/feed","Blocked",0,0

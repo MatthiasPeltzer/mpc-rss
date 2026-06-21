@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php"
+         colors="true"
+         failOnWarning="true"
+         failOnRisky="true"
+         cacheDirectory=".phpunit.cache"
+         backupGlobals="true">
+    <testsuites>
+        <testsuite name="Functional">
+            <directory>Tests/Functional</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory>Classes</directory>
+        </include>
+    </source>
+    <php>
+        <!--
+            Database connection for the functional test instance.
+
+            WARNING: the testing-framework DROPS and RE-CREATES this database on
+            every run, so it MUST be a dedicated throwaway name and never the
+            DDEV application database ("db"). The values below are the local DDEV
+            service credentials; override them via real environment variables in
+            CI. The root user is used because the framework needs CREATE/DROP
+            DATABASE privileges.
+        -->
+        <env name="typo3DatabaseDriver" value="mysqli"/>
+        <env name="typo3DatabaseHost" value="db"/>
+        <env name="typo3DatabasePort" value="3306"/>
+        <env name="typo3DatabaseUsername" value="root"/>
+        <env name="typo3DatabasePassword" value="root"/>
+        <env name="typo3DatabaseName" value="func_test_mpcrss"/>
+    </php>
+</phpunit>

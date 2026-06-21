@@ -1,0 +1,6 @@
+"tx_mpcrss_domain_model_feed"
+,"uid","pid","tt_content","title","feed_url","source_name","hidden","deleted"
+,1,1,100,"Feed A","https://a.example/feed","Source A",0,0
+,2,1,100,"Hidden Feed","https://hidden.example/feed","Hidden",1,0
+,3,1,100,"Deleted Feed","https://del.example/feed","Deleted",0,1
+,4,1,200,"Feed B","https://b.example/feed","Source B",0,0
