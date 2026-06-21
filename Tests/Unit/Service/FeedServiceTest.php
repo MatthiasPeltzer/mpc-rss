@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Mpc\MpcRss\Tests\Unit\Service;
 
+use GuzzleHttp\Psr7\Utils;
 use Mpc\MpcRss\Service\FeedService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 
 /**
  * Unit tests for the pure (network-free) logic of {@see FeedService}: URL and
@@ -31,6 +33,28 @@ final class FeedServiceTest extends TestCase
         // Since PHP 8.1 reflection ignores method visibility, so no
         // setAccessible() call is needed (it is a deprecated no-op on 8.5+).
         return (new \ReflectionMethod($this->subject, $method))->invoke($this->subject, ...$arguments);
+    }
+
+    /**
+     * Inject a cache frontend so the (otherwise network-bound) fetch methods can
+     * be exercised from a cache hit alone. Setting the private `cache` property
+     * short-circuits getCache(), so the CacheManager is never touched.
+     *
+     * @param array<string, mixed> $valuesByIdentifier feed_<md5(url)> => cached value
+     */
+    private function injectCacheReturning(array $valuesByIdentifier): void
+    {
+        $cache = $this->createMock(FrontendInterface::class);
+        $cache->method('get')->willReturnCallback(
+            static fn(string $identifier): mixed => $valuesByIdentifier[$identifier] ?? false,
+        );
+
+        (new \ReflectionProperty(FeedService::class, 'cache'))->setValue($this->subject, $cache);
+    }
+
+    private static function cacheId(string $url): string
+    {
+        return 'feed_' . md5($url);
     }
 
     /**
@@ -718,5 +742,94 @@ final class FeedServiceTest extends TestCase
         $result = $this->invoke('sortAndSliceGroups', $grouped, 0);
 
         self::assertSame(['kultur', 'Politik', 'Wirtschaft'], array_keys($result));
+    }
+
+    // ------------------------------------------------------------------
+    // Bounded body reading
+    // ------------------------------------------------------------------
+
+    public function testReadBoundedBodyReturnsFullBodyWithinLimit(): void
+    {
+        $stream = Utils::streamFor('hello world');
+
+        self::assertSame('hello world', $this->invoke('readBoundedBody', $stream));
+    }
+
+    public function testReadBoundedBodyReturnsNullWhenLimitExceeded(): void
+    {
+        // MAX_FEED_BYTES is 5 MiB; one byte over the limit must abort the read.
+        $stream = Utils::streamFor(str_repeat('a', 5_242_881));
+
+        self::assertNull($this->invoke('readBoundedBody', $stream));
+    }
+
+    // ------------------------------------------------------------------
+    // SSRF guard: resolved IPs for literals
+    // ------------------------------------------------------------------
+
+    public function testResolveValidatedIpsReturnsPublicIpLiteral(): void
+    {
+        self::assertSame(['8.8.8.8'], $this->invoke('resolveValidatedIps', 'http://8.8.8.8/feed.xml'));
+    }
+
+    public function testResolveValidatedIpsRejectsPrivateIpLiteral(): void
+    {
+        self::assertNull($this->invoke('resolveValidatedIps', 'http://10.0.0.1/feed.xml'));
+    }
+
+    // ------------------------------------------------------------------
+    // Orchestration via a cached hit (no network)
+    // ------------------------------------------------------------------
+
+    public function testFetchGroupedByCategoryDeduplicatesAndGroupsAcrossFeeds(): void
+    {
+        $feedA = 'https://a.example/feed';
+        $feedB = 'https://b.example/feed';
+
+        $this->injectCacheReturning([
+            self::cacheId($feedA) => [
+                ['link' => 'https://x/1', 'title' => 'One', 'categories' => ['Politik'], 'date' => '2026-03-01T00:00:00+00:00', 'source' => $feedA, 'sourceName' => 'A'],
+                ['link' => 'https://x/dup', 'title' => 'Dup A', 'categories' => ['Politik'], 'date' => '2026-02-01T00:00:00+00:00', 'source' => $feedA, 'sourceName' => 'A'],
+            ],
+            self::cacheId($feedB) => [
+                ['link' => 'https://x/dup', 'title' => 'Dup B', 'categories' => ['Sport'], 'date' => '2026-04-01T00:00:00+00:00', 'source' => $feedB, 'sourceName' => 'B'],
+                ['link' => 'https://x/2', 'title' => 'Two', 'categories' => ['Sport'], 'date' => '2026-01-01T00:00:00+00:00', 'source' => $feedB, 'sourceName' => 'B'],
+            ],
+        ]);
+
+        $result = $this->invoke('fetchGroupedByCategory', [$feedA, $feedB], 0, 3600, [], [], [], 'category');
+
+        self::assertArrayHasKey('Politik', $result);
+        self::assertArrayHasKey('Sport', $result);
+        // The duplicate link is kept from its first occurrence (feed A / Politik),
+        // so it must not also appear under Sport.
+        self::assertContains('https://x/dup', array_column($result['Politik'], 'link'));
+        self::assertNotContains('https://x/dup', array_column($result['Sport'], 'link'));
+        self::assertSame(['https://x/2'], array_column($result['Sport'], 'link'));
+    }
+
+    public function testFetchGroupedByCategoryAppliesMaxItemsPerGroup(): void
+    {
+        $feed = 'https://a.example/feed';
+        $this->injectCacheReturning([
+            self::cacheId($feed) => [
+                ['link' => 'https://x/1', 'categories' => ['Politik'], 'date' => '2026-01-01T00:00:00+00:00', 'source' => $feed, 'sourceName' => 'A'],
+                ['link' => 'https://x/3', 'categories' => ['Politik'], 'date' => '2026-03-01T00:00:00+00:00', 'source' => $feed, 'sourceName' => 'A'],
+                ['link' => 'https://x/2', 'categories' => ['Politik'], 'date' => '2026-02-01T00:00:00+00:00', 'source' => $feed, 'sourceName' => 'A'],
+            ],
+        ]);
+
+        $result = $this->invoke('fetchGroupedByCategory', [$feed], 2, 3600, [], [], [], 'category');
+
+        // Newest two only, sorted descending.
+        self::assertSame(['https://x/3', 'https://x/2'], array_column($result['Politik'], 'link'));
+    }
+
+    public function testWarmCacheReturnsTrueOnCacheHit(): void
+    {
+        $url = 'https://example.com/feed';
+        $this->injectCacheReturning([self::cacheId($url) => []]);
+
+        self::assertTrue($this->invoke('warmCache', $url, 3600, []));
     }
 }
