@@ -1,0 +1,6 @@
+"tt_content"
+,"uid","pid","CType","colPos","header","tx_mpcrss_grouping_mode"
+,70,1,"mpcrss_feed",0,"RSS Invalid","unexpected"
+"tx_mpcrss_domain_model_feed"
+,"uid","pid","tt_content","title","feed_url","source_name","hidden","deleted"
+,1,1,70,"Invalid Feed","https://invalid.example/feed","Invalid Source",0,0

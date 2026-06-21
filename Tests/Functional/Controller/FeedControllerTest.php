@@ -218,4 +218,44 @@ final class FeedControllerTest extends FunctionalTestCase
         self::assertStringContainsString('Today', $html);
         self::assertStringContainsString('Fresh Item', $html);
     }
+
+    public function testNoneGroupingRendersItemsWithoutFilterNavigation(): void
+    {
+        $this->importCSVDataSet(__DIR__ . '/../Fixtures/content_none.csv');
+
+        $this->seedFeedCache('https://none.example/feed', [
+            self::makeItem([
+                'title' => 'Ungrouped Item',
+                'link' => 'https://none.example/article',
+                'source' => 'https://none.example/feed',
+                'sourceName' => 'None Source',
+            ]),
+        ]);
+
+        $html = $this->renderHomePageWithPluginArguments([]);
+
+        self::assertStringContainsString('Ungrouped Item', $html);
+        // groupingMode "none" suppresses the category/source/date filter navigation.
+        self::assertStringNotContainsString('rss-categories', $html);
+    }
+
+    public function testUnknownGroupingModeUsesTheGenericFilterLabel(): void
+    {
+        $this->importCSVDataSet(__DIR__ . '/../Fixtures/content_invalid_grouping.csv');
+
+        $this->seedFeedCache('https://invalid.example/feed', [
+            self::makeItem([
+                'title' => 'Fallback Item',
+                'link' => 'https://invalid.example/article',
+                'source' => 'https://invalid.example/feed',
+                'sourceName' => 'Invalid Source',
+            ]),
+        ]);
+
+        $html = $this->renderHomePageWithPluginArguments([]);
+
+        self::assertStringContainsString('Fallback Item', $html);
+        // getNavigationLabel() falls back to the generic "Filter" label.
+        self::assertStringContainsString('Filter', $html);
+    }
 }
