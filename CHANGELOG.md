@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.2.3]
+
+### Fixed
+- Images and links are now read correctly from namespaced feed elements. Attribute
+  access on nodes reached via `children($namespace)` looked for a namespaced
+  attribute (e.g. `media:url`) instead of the plain one, so `media:content` /
+  `media:thumbnail` image URLs and Atom `<link href>` / `<category term>` values
+  were silently dropped. Feeds such as taz.de now show their thumbnails again.
+
+### Tests
+- Added a PHPUnit unit suite for `FeedService` covering URL/HTML sanitization, the
+  SSRF host guard, the IP-pinned `fetchFeedBody` fetch loop (success, manual
+  redirect following, max-redirect cutoff, non-200, body-size limit, disallowed
+  URLs), parsing/grouping/date logic and cache-hit orchestration.
+- Added a TYPO3 testing-framework functional suite for `FeedController::listAction`
+  (full frontend render: items, pagination, source/date/none grouping),
+  `FeedRepository`, `UpdateFeedsCommand` and `UpdateFeedsTask`.
+- Added `test:unit` / `test:functional` Composer scripts and the matching dev
+  dependencies (`phpunit/phpunit`, `typo3/testing-framework`, `typo3/cms-scheduler`).
+
 ## [v1.2.2]
 
 ### Security
