@@ -1,0 +1,6 @@
+"tt_content"
+,"uid","pid","CType","colPos","header","tx_mpcrss_grouping_mode","tx_mpcrss_default_category"
+,40,1,"mpcrss_feed",0,"RSS Source","source","Politik"
+"tx_mpcrss_domain_model_feed"
+,"uid","pid","tt_content","title","feed_url","source_name","hidden","deleted"
+,1,1,40,"Src Feed","https://src.example/feed","Source A",0,0

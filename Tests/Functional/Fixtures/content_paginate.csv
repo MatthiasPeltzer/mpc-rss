@@ -1,0 +1,6 @@
+"tt_content"
+,"uid","pid","CType","colPos","header","tx_mpcrss_grouping_mode","tx_mpcrss_default_category","tx_mpcrss_max_items","tx_mpcrss_paginate","tx_mpcrss_items_per_page","tx_mpcrss_show_filter"
+,30,1,"mpcrss_feed",0,"RSS Paginate","category","Politik",9,1,2,1
+"tx_mpcrss_domain_model_feed"
+,"uid","pid","tt_content","title","feed_url","source_name","hidden","deleted"
+,1,1,30,"Page Feed","https://page.example/feed","Page Source",0,0
