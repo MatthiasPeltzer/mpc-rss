@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Mpc\MpcRss\Tests\Unit\Service;
 
+use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Utils;
 use Mpc\MpcRss\Service\FeedService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
+use TYPO3\CMS\Core\Http\RequestFactory;
 
 /**
  * Unit tests for the pure (network-free) logic of {@see FeedService}: URL and
@@ -831,5 +835,121 @@ final class FeedServiceTest extends TestCase
         $this->injectCacheReturning([self::cacheId($url) => []]);
 
         self::assertTrue($this->invoke('warmCache', $url, 3600, []));
+    }
+
+    // ------------------------------------------------------------------
+    // fetchFeedBody: SSRF-safe fetching with manual redirect following
+    //
+    // Public IP-literal URLs are used so resolveValidatedIps() needs no DNS,
+    // and the injected RequestFactory is mocked so no socket is opened.
+    // ------------------------------------------------------------------
+
+    /**
+     * Invoke the private fetchFeedBody() against a FeedService backed by the
+     * given (mocked) RequestFactory. A constructed instance is used so the
+     * readonly requestFactory dependency is set the normal way.
+     */
+    private function fetchBody(string $url, RequestFactory $factory): ?string
+    {
+        $subject = new FeedService($this->createMock(CacheManager::class), $factory);
+
+        return (new \ReflectionMethod($subject, 'fetchFeedBody'))->invoke($subject, $url);
+    }
+
+    public function testFetchFeedBodyReturnsBodyOnSuccess(): void
+    {
+        $factory = $this->createMock(RequestFactory::class);
+        $factory->method('request')->willReturnCallback(
+            function (string $uri, string $method, array $options): ResponseInterface {
+                self::assertSame('GET', $method);
+                // Redirects are followed by hand, so auto-following must be off.
+                self::assertFalse($options['allow_redirects']);
+                return new Response(200, [], '<rss>ok</rss>');
+            },
+        );
+
+        self::assertSame('<rss>ok</rss>', $this->fetchBody('http://93.184.216.34/feed', $factory));
+    }
+
+    public function testFetchFeedBodyFollowsRedirectsAndRevalidatesEachHop(): void
+    {
+        $responses = [
+            'http://93.184.216.34/feed' => new Response(302, ['Location' => '/v2']),
+            'http://93.184.216.34/v2' => new Response(200, [], '<rss>final</rss>'),
+        ];
+        $requested = [];
+
+        $factory = $this->createMock(RequestFactory::class);
+        $factory->method('request')->willReturnCallback(
+            function (string $uri) use (&$requested, $responses): ResponseInterface {
+                $requested[] = $uri;
+                return $responses[$uri] ?? new Response(404);
+            },
+        );
+
+        $body = $this->fetchBody('http://93.184.216.34/feed', $factory);
+
+        self::assertSame('<rss>final</rss>', $body);
+        // The relative Location was resolved against the current URL and re-fetched.
+        self::assertSame(['http://93.184.216.34/feed', 'http://93.184.216.34/v2'], $requested);
+    }
+
+    public function testFetchFeedBodyStopsAfterMaxRedirects(): void
+    {
+        $count = 0;
+        $factory = $this->createMock(RequestFactory::class);
+        $factory->method('request')->willReturnCallback(
+            function (string $uri) use (&$count): ResponseInterface {
+                $count++;
+                return new Response(302, ['Location' => 'http://93.184.216.' . (40 + $count) . '/feed']);
+            },
+        );
+
+        $body = $this->fetchBody('http://93.184.216.39/feed', $factory);
+
+        self::assertNull($body);
+        // Initial request + MAX_REDIRECTS (3) follows; the 4th hop is refused.
+        self::assertSame(4, $count);
+    }
+
+    public function testFetchFeedBodyReturnsNullOnNon200(): void
+    {
+        $factory = $this->createMock(RequestFactory::class);
+        $factory->method('request')->willReturn(new Response(404, [], 'not found'));
+
+        self::assertNull($this->fetchBody('http://93.184.216.34/feed', $factory));
+    }
+
+    public function testFetchFeedBodyReturnsNullWhenBodyExceedsLimit(): void
+    {
+        // One byte over MAX_FEED_BYTES (5 MiB) must abort the bounded read.
+        $factory = $this->createMock(RequestFactory::class);
+        $factory->method('request')->willReturn(new Response(200, [], str_repeat('a', 5_242_881)));
+
+        self::assertNull($this->fetchBody('http://93.184.216.34/feed', $factory));
+    }
+
+    public function testFetchFeedBodyRefusesDisallowedUrlWithoutRequesting(): void
+    {
+        $factory = $this->createMock(RequestFactory::class);
+        $factory->expects(self::never())->method('request');
+
+        self::assertNull($this->fetchBody('http://127.0.0.1/feed', $factory));
+    }
+
+    public function testFetchFeedBodyReturnsNullOnRedirectToUnsupportedScheme(): void
+    {
+        $factory = $this->createMock(RequestFactory::class);
+        $factory->method('request')->willReturn(new Response(302, ['Location' => 'ftp://example.com/file']));
+
+        self::assertNull($this->fetchBody('http://93.184.216.34/feed', $factory));
+    }
+
+    public function testFetchFeedBodyReturnsNullOnRedirectWithoutLocation(): void
+    {
+        $factory = $this->createMock(RequestFactory::class);
+        $factory->method('request')->willReturn(new Response(302, []));
+
+        self::assertNull($this->fetchBody('http://93.184.216.34/feed', $factory));
     }
 }

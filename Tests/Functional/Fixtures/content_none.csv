@@ -1,0 +1,6 @@
+"tt_content"
+,"uid","pid","CType","colPos","header","tx_mpcrss_grouping_mode"
+,60,1,"mpcrss_feed",0,"RSS None","none"
+"tx_mpcrss_domain_model_feed"
+,"uid","pid","tt_content","title","feed_url","source_name","hidden","deleted"
+,1,1,60,"None Feed","https://none.example/feed","None Source",0,0
