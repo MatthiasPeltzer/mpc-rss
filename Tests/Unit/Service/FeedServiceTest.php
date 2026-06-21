@@ -28,10 +28,9 @@ final class FeedServiceTest extends TestCase
 
     private function invoke(string $method, mixed ...$arguments): mixed
     {
-        $reflection = new \ReflectionMethod($this->subject, $method);
-        $reflection->setAccessible(true);
-
-        return $reflection->invoke($this->subject, ...$arguments);
+        // Since PHP 8.1 reflection ignores method visibility, so no
+        // setAccessible() call is needed (it is a deprecated no-op on 8.5+).
+        return (new \ReflectionMethod($this->subject, $method))->invoke($this->subject, ...$arguments);
     }
 
     /**
@@ -362,5 +361,362 @@ final class FeedServiceTest extends TestCase
     public function testResolveRedirectLocation(string $currentUrl, string $location, ?string $expected): void
     {
         self::assertSame($expected, $this->invoke('resolveRedirectLocation', $currentUrl, $location));
+    }
+
+    /**
+     * Build an `<item>` element with the media and atom namespaces declared so
+     * the namespace-sensitive image extraction can be exercised in isolation.
+     */
+    private function makeItem(string $innerXml): \SimpleXMLElement
+    {
+        $xml = '<?xml version="1.0"?>'
+            . '<rss xmlns:media="http://search.yahoo.com/mrss/" xmlns:atom="http://www.w3.org/2005/Atom">'
+            . '<channel><item>' . $innerXml . '</item></channel></rss>';
+
+        return (new \SimpleXMLElement($xml))->channel->item[0];
+    }
+
+    /**
+     * Regression test for the SimpleXML namespace gotcha: the `url` attribute on
+     * a `<media:content>` reached via children($ns) lives in *no* namespace, so
+     * it must be read with attributes(), not `$node['url']`.
+     */
+    public function testExtractImageUrlReadsMediaContentUrl(): void
+    {
+        $item = $this->makeItem('<media:content url="https://example.com/pic.jpg" medium="image" type="image/jpeg"/>');
+
+        self::assertSame('https://example.com/pic.jpg', $this->invoke('extractImageUrl', $item, ''));
+    }
+
+    public function testExtractImageUrlFallsBackToMediaThumbnail(): void
+    {
+        $item = $this->makeItem('<media:thumbnail url="https://example.com/thumb.jpg"/>');
+
+        self::assertSame('https://example.com/thumb.jpg', $this->invoke('extractImageUrl', $item, ''));
+    }
+
+    public function testExtractImageUrlPrefersEnclosureOverMediaContent(): void
+    {
+        $item = $this->makeItem(
+            '<enclosure url="https://example.com/enc.jpg" type="image/jpeg"/>'
+            . '<media:content url="https://example.com/media.jpg"/>',
+        );
+
+        self::assertSame('https://example.com/enc.jpg', $this->invoke('extractImageUrl', $item, ''));
+    }
+
+    public function testExtractImageUrlSkipsNonImageEnclosure(): void
+    {
+        $item = $this->makeItem(
+            '<enclosure url="https://example.com/audio.mp3" type="audio/mpeg"/>'
+            . '<media:content url="https://example.com/media.jpg"/>',
+        );
+
+        self::assertSame('https://example.com/media.jpg', $this->invoke('extractImageUrl', $item, ''));
+    }
+
+    public function testExtractImageUrlFallsBackToHtmlImg(): void
+    {
+        $item = $this->makeItem('<title>No media here</title>');
+
+        $html = '<p>Intro</p><img src="https://example.com/in-body.jpg" alt="x">';
+
+        self::assertSame('https://example.com/in-body.jpg', $this->invoke('extractImageUrl', $item, $html));
+    }
+
+    public function testExtractImageUrlReturnsNullWhenNoImagePresent(): void
+    {
+        $item = $this->makeItem('<title>Nothing</title>');
+
+        self::assertNull($this->invoke('extractImageUrl', $item, '<p>text only</p>'));
+    }
+
+    // ------------------------------------------------------------------
+    // Feed parsing (RSS / Atom)
+    // ------------------------------------------------------------------
+
+    public function testParseRssItemsNormalizesAllFields(): void
+    {
+        $rss = '<?xml version="1.0"?>'
+            . '<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:media="http://search.yahoo.com/mrss/">'
+            . '<channel><item>'
+            . '<title>RSS &lt;b&gt;Title&lt;/b&gt;</title>'
+            . '<description>&lt;p&gt;Hi&lt;/p&gt;&lt;script&gt;evil()&lt;/script&gt;</description>'
+            . '<link>https://example.com/a</link>'
+            . '<pubDate>Fri, 20 Jun 2026 17:46:00 +0200</pubDate>'
+            . '<category>Politik</category>'
+            . '<category>Wirtschaft</category>'
+            . '<media:content url="https://example.com/img.jpg" medium="image"/>'
+            . '</item></channel></rss>';
+
+        $xml = $this->invoke('parseXmlSafely', $rss);
+        $items = $this->invoke('parseRssItems', $xml, 'https://news.example.com/feed', []);
+
+        self::assertCount(1, $items);
+        $item = $items[0];
+
+        self::assertSame('RSS Title', $item['title']);
+        self::assertSame('<p>Hi</p>', $item['description']);
+        self::assertSame('https://example.com/a', $item['link']);
+        self::assertSame(['Politik', 'Wirtschaft'], $item['categories']);
+        self::assertSame('https://example.com/img.jpg', $item['image']);
+        self::assertSame('https://news.example.com/feed', $item['source']);
+        self::assertSame('News', $item['sourceName']);
+        // Date is normalized to ISO-8601 and represents the same instant as the input.
+        self::assertNotNull($item['date']);
+        self::assertSame(strtotime('Fri, 20 Jun 2026 17:46:00 +0200'), strtotime($item['date']));
+    }
+
+    public function testParseRssItemsUsesContentEncodedForImageAndDropsNonHttpLink(): void
+    {
+        $rss = '<?xml version="1.0"?>'
+            . '<rss xmlns:content="http://purl.org/rss/1.0/modules/content/">'
+            . '<channel><item>'
+            . '<title>No media</title>'
+            . '<description>Plain summary</description>'
+            . '<link>javascript:alert(1)</link>'
+            . '<content:encoded><![CDATA[<p>Body <img src="https://example.com/enc.jpg" alt="x"></p>]]></content:encoded>'
+            . '</item></channel></rss>';
+
+        $xml = $this->invoke('parseXmlSafely', $rss);
+        $items = $this->invoke('parseRssItems', $xml, 'https://example.com/feed', []);
+
+        self::assertSame('https://example.com/enc.jpg', $items[0]['image']);
+        self::assertSame('', $items[0]['link']);
+    }
+
+    public function testParseRssItemsAppliesExplicitSourceName(): void
+    {
+        $rss = '<?xml version="1.0"?><rss><channel><item><title>x</title>'
+            . '<link>https://example.com/a</link></item></channel></rss>';
+
+        $xml = $this->invoke('parseXmlSafely', $rss);
+        $items = $this->invoke('parseRssItems', $xml, 'https://example.com/feed', ['https://example.com/feed' => 'My Source']);
+
+        self::assertSame('My Source', $items[0]['sourceName']);
+    }
+
+    public function testParseAtomItemsNormalizesAllFields(): void
+    {
+        $atom = '<?xml version="1.0"?>'
+            . '<feed xmlns="http://www.w3.org/2005/Atom">'
+            . '<entry>'
+            . '<title>Atom &amp; Title</title>'
+            . '<summary>Ignored summary</summary>'
+            . '<content type="html">&lt;p&gt;Body&lt;/p&gt;&lt;script&gt;x()&lt;/script&gt;</content>'
+            . '<link rel="alternate" href="https://example.com/post"/>'
+            . '<published>2026-06-20T10:00:00Z</published>'
+            . '<updated>2026-06-21T10:00:00Z</updated>'
+            . '<category term="Tech"/>'
+            . '</entry>'
+            . '</feed>';
+
+        $xml = $this->invoke('parseXmlSafely', $atom);
+        $items = $this->invoke('parseAtomItems', $xml, 'https://example.org/atom', []);
+
+        self::assertCount(1, $items);
+        $item = $items[0];
+
+        self::assertSame('Atom & Title', $item['title']);
+        // content is preferred over summary, then sanitized.
+        self::assertSame('<p>Body</p>', $item['description']);
+        self::assertSame('https://example.com/post', $item['link']);
+        self::assertSame(['Tech'], $item['categories']);
+        // updated is preferred over published.
+        self::assertSame(strtotime('2026-06-21T10:00:00Z'), strtotime($item['date']));
+    }
+
+    public function testParseAtomItemsFallsBackToSummaryWhenNoContent(): void
+    {
+        $atom = '<?xml version="1.0"?>'
+            . '<feed xmlns="http://www.w3.org/2005/Atom">'
+            . '<entry><title>t</title><summary>Just a summary</summary>'
+            . '<link href="https://example.com/x"/></entry></feed>';
+
+        $xml = $this->invoke('parseXmlSafely', $atom);
+        $items = $this->invoke('parseAtomItems', $xml, 'https://example.org/atom', []);
+
+        self::assertSame('Just a summary', $items[0]['description']);
+    }
+
+    public function testResolveAtomLinkPrefersAlternate(): void
+    {
+        $a = $this->atomChildren(
+            '<link rel="self" href="https://example.com/self"/>'
+            . '<link rel="alternate" href="https://example.com/alt"/>',
+        );
+
+        self::assertSame('https://example.com/alt', $this->invoke('resolveAtomLink', $a));
+    }
+
+    public function testResolveAtomLinkFallsBackToRellessLink(): void
+    {
+        $a = $this->atomChildren(
+            '<link rel="enclosure" href="https://example.com/enc"/>'
+            . '<link href="https://example.com/plain"/>',
+        );
+
+        self::assertSame('https://example.com/plain', $this->invoke('resolveAtomLink', $a));
+    }
+
+    public function testResolveAtomLinkFallsBackToFirstHref(): void
+    {
+        $a = $this->atomChildren('<link rel="self" href="https://example.com/only-self"/>');
+
+        self::assertSame('https://example.com/only-self', $this->invoke('resolveAtomLink', $a));
+    }
+
+    /**
+     * Return the Atom-namespaced children of a single <entry> built from the
+     * given inner markup, matching what parseAtomItems passes to resolveAtomLink.
+     */
+    private function atomChildren(string $inner): \SimpleXMLElement
+    {
+        $xml = '<?xml version="1.0"?><feed xmlns="http://www.w3.org/2005/Atom"><entry>'
+            . $inner . '</entry></feed>';
+
+        return $this->invoke('parseXmlSafely', $xml)->entry[0]->children('http://www.w3.org/2005/Atom');
+    }
+
+    // ------------------------------------------------------------------
+    // Date handling
+    // ------------------------------------------------------------------
+
+    public function testParseDateReturnsNullForEmptyString(): void
+    {
+        self::assertNull($this->invoke('parseDate', ''));
+    }
+
+    public function testParseDateReturnsNullForUnparseableString(): void
+    {
+        self::assertNull($this->invoke('parseDate', 'not a date at all'));
+    }
+
+    public function testParseDateNormalizesValidRfc822Date(): void
+    {
+        $result = $this->invoke('parseDate', 'Fri, 20 Jun 2026 17:46:00 +0200');
+
+        self::assertIsString($result);
+        // Same absolute instant, regardless of the server's default timezone.
+        self::assertSame(strtotime('Fri, 20 Jun 2026 17:46:00 +0200'), strtotime($result));
+    }
+
+    public function testGetDateGroupKeyBuckets(): void
+    {
+        // Build inputs as absolute offsets from now so the day difference is an
+        // exact multiple of 86400 and the boundaries are not flaky across DST.
+        $cases = [
+            [0, 'Today'],
+            [1, 'Yesterday'],
+            [7, 'This Week'],
+            [8, 'This Month'],
+            [30, 'This Month'],
+            [31, 'Last 3 Months'],
+            [90, 'Last 3 Months'],
+            [91, 'Older'],
+        ];
+
+        foreach ($cases as [$daysAgo, $expected]) {
+            $input = date('c', time() - ($daysAgo * 86400));
+            self::assertSame($expected, $this->invoke('getDateGroupKey', $input), "offset {$daysAgo}d");
+        }
+    }
+
+    public function testGetDateGroupKeyReturnsNoDateForEmptyAndGarbage(): void
+    {
+        self::assertSame('No Date', $this->invoke('getDateGroupKey', ''));
+        self::assertSame('No Date', $this->invoke('getDateGroupKey', 'rubbish'));
+    }
+
+    // ------------------------------------------------------------------
+    // Category detection, grouping & slicing
+    // ------------------------------------------------------------------
+
+    /**
+     * @return array<string, array{0: string, 1: ?string}>
+     */
+    public static function detectCategoryFromUrlProvider(): array
+    {
+        return [
+            'german slug maps to itself' => ['https://x.de/politik/article', 'Politik'],
+            'english economy maps to german' => ['https://x.com/economy/story', 'Wirtschaft'],
+            'english sports maps to german' => ['https://x.com/sports/match', 'Sport'],
+            'english technology maps to digital' => ['https://x.com/technology/ai', 'Digital'],
+            'trailing slug without slash matches' => ['https://x.de/kultur', 'Kultur'],
+            'unknown segment is not detected' => ['https://x.com/lifestyle/story', null],
+            'no path is not detected' => ['https://x.com', null],
+        ];
+    }
+
+    #[DataProvider('detectCategoryFromUrlProvider')]
+    public function testDetectCategoryFromUrl(string $url, ?string $expected): void
+    {
+        self::assertSame($expected, $this->invoke('detectCategoryFromUrl', $url));
+    }
+
+    public function testGroupItemsDateModeBucketsAndSortsByDate(): void
+    {
+        $today = date('c');
+        $longAgo = date('c', time() - (200 * 86400));
+
+        $items = [
+            ['link' => 'https://example.com/old', 'date' => $longAgo],
+            ['link' => 'https://example.com/new', 'date' => $today],
+        ];
+
+        $result = $this->invoke('groupItems', $items, 'date', [], []);
+
+        self::assertArrayHasKey('Today', $result);
+        self::assertArrayHasKey('Older', $result);
+        self::assertSame('https://example.com/new', $result['Today'][0]['link']);
+        self::assertSame('https://example.com/old', $result['Older'][0]['link']);
+    }
+
+    public function testGroupItemsSourceModeRestoresDisplayName(): void
+    {
+        $items = [
+            ['link' => 'https://example.com/1', 'sourceName' => 'BBC News'],
+            ['link' => 'https://example.com/2', 'sourceName' => 'BBC News'],
+            ['link' => 'https://example.com/3', 'sourceName' => 'taz'],
+        ];
+
+        $result = $this->invoke('groupItems', $items, 'source', [], []);
+
+        // Keys are the original (non-lowercased) display names, grouped by source.
+        self::assertArrayHasKey('BBC News', $result);
+        self::assertArrayHasKey('taz', $result);
+        self::assertCount(2, $result['BBC News']);
+        self::assertCount(1, $result['taz']);
+    }
+
+    public function testSortAndSliceGroupsSortsByDateDescAndAppliesMaxItems(): void
+    {
+        $grouped = [
+            'Sport' => [
+                ['link' => 'https://example.com/s1', 'date' => '2026-01-01T00:00:00+00:00'],
+                ['link' => 'https://example.com/s3', 'date' => '2026-03-01T00:00:00+00:00'],
+                ['link' => 'https://example.com/s2', 'date' => '2026-02-01T00:00:00+00:00'],
+            ],
+        ];
+
+        $result = $this->invoke('sortAndSliceGroups', $grouped, 2);
+
+        self::assertCount(2, $result['Sport']);
+        // Newest first, and the oldest (s1) dropped by the maxItems=2 slice.
+        self::assertSame('https://example.com/s3', $result['Sport'][0]['link']);
+        self::assertSame('https://example.com/s2', $result['Sport'][1]['link']);
+    }
+
+    public function testSortAndSliceGroupsOrdersGroupKeysCaseInsensitively(): void
+    {
+        $grouped = [
+            'Wirtschaft' => [['link' => 'https://example.com/w', 'date' => '2026-01-01T00:00:00+00:00']],
+            'kultur' => [['link' => 'https://example.com/k', 'date' => '2026-01-01T00:00:00+00:00']],
+            'Politik' => [['link' => 'https://example.com/p', 'date' => '2026-01-01T00:00:00+00:00']],
+        ];
+
+        $result = $this->invoke('sortAndSliceGroups', $grouped, 0);
+
+        self::assertSame(['kultur', 'Politik', 'Wirtschaft'], array_keys($result));
     }
 }

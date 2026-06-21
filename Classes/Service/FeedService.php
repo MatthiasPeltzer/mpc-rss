@@ -490,7 +490,7 @@ final class FeedService implements LoggerAwareInterface
             $categoryElements = $this->getXmlChild($a, 'category');
             if ($categoryElements !== null) {
                 foreach ($categoryElements as $cat) {
-                    $term = isset($cat['term']) ? (string)$cat['term'] : '';
+                    $term = $this->getXmlAttribute($cat, 'term');
                     $categories[] = $term !== '' ? $term : (string)$cat;
                 }
             }
@@ -520,8 +520,8 @@ final class FeedService implements LoggerAwareInterface
 
         $fallback = '';
         foreach ($linkElements as $l) {
-            $rel = isset($l['rel']) ? (string)$l['rel'] : '';
-            $href = isset($l['href']) ? (string)$l['href'] : '';
+            $rel = $this->getXmlAttribute($l, 'rel');
+            $href = $this->getXmlAttribute($l, 'href');
             if ($href !== '' && ($rel === '' || $rel === 'alternate')) {
                 if ($rel === 'alternate') {
                     return $href;
@@ -534,7 +534,7 @@ final class FeedService implements LoggerAwareInterface
             return $fallback;
         }
 
-        return isset($linkElements[0]['href']) ? (string)$linkElements[0]['href'] : '';
+        return $this->getXmlAttribute($linkElements[0], 'href');
     }
 
     /**
@@ -818,8 +818,8 @@ final class FeedService implements LoggerAwareInterface
         $enclosures = $this->getXmlChild($entry, 'enclosure');
         if ($enclosures !== null) {
             foreach ($enclosures as $enclosure) {
-                $type = isset($enclosure['type']) ? (string)$enclosure['type'] : '';
-                $urlAttr = isset($enclosure['url']) ? (string)$enclosure['url'] : '';
+                $type = $this->getXmlAttribute($enclosure, 'type');
+                $urlAttr = $this->getXmlAttribute($enclosure, 'url');
                 if ($urlAttr !== '' && ($type === '' || str_starts_with($type, 'image'))) {
                     return $urlAttr;
                 }
@@ -831,7 +831,7 @@ final class FeedService implements LoggerAwareInterface
         $mediaContent = $this->getXmlChild($mediaNs, 'content');
         if ($mediaContent !== null) {
             foreach ($mediaContent as $mc) {
-                $urlAttr = isset($mc['url']) ? (string)$mc['url'] : '';
+                $urlAttr = $this->getXmlAttribute($mc, 'url');
                 if ($urlAttr !== '') {
                     return $urlAttr;
                 }
@@ -840,7 +840,7 @@ final class FeedService implements LoggerAwareInterface
 
         $mediaThumbnail = $this->getXmlChild($mediaNs, 'thumbnail');
         if ($mediaThumbnail !== null) {
-            $thumbUrl = isset($mediaThumbnail['url']) ? (string)$mediaThumbnail['url'] : '';
+            $thumbUrl = $this->getXmlAttribute($mediaThumbnail, 'url');
             if ($thumbUrl !== '') {
                 return $thumbUrl;
             }
@@ -851,6 +851,25 @@ final class FeedService implements LoggerAwareInterface
         }
 
         return null;
+    }
+
+    /**
+     * Read a non-namespaced attribute (e.g. the `url` on `<media:content url="…">`).
+     *
+     * Nodes reached through SimpleXMLElement::children($namespace) bind plain
+     * `$node['attr']` access to that namespace, so `$mediaContent['url']` would
+     * look for a non-existent `media:url` attribute and return nothing.
+     * attributes() with no argument always returns the no-namespace attributes,
+     * which is what feed media attributes (url, type, …) actually use.
+     */
+    private function getXmlAttribute(\SimpleXMLElement $node, string $name): string
+    {
+        $attributes = $node->attributes();
+        if ($attributes !== null && isset($attributes[$name])) {
+            return (string)$attributes[$name];
+        }
+
+        return '';
     }
 
     /**

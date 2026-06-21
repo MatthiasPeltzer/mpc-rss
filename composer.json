@@ -33,6 +33,12 @@
   "require-dev": {
     "phpunit/phpunit": "^11.5"
   },
+  "config": {
+    "allow-plugins": {
+      "typo3/class-alias-loader": true,
+      "typo3/cms-composer-installers": true
+    }
+  },
   "scripts": {
     "test:unit": "phpunit -c phpunit.xml.dist"
   },
