@@ -1,0 +1,6 @@
+"tt_content"
+,"uid","pid","CType","colPos","header","tx_mpcrss_grouping_mode","tx_mpcrss_default_category","tx_mpcrss_max_items","tx_mpcrss_cache_lifetime","tx_mpcrss_show_filter"
+,10,1,"mpcrss_feed",0,"RSS","category","Politik",9,1800,1
+"tx_mpcrss_domain_model_feed"
+,"uid","pid","tt_content","title","feed_url","source_name","hidden","deleted"
+,1,1,10,"Seeded Feed","https://seeded.example/feed","Seeded Source",0,0

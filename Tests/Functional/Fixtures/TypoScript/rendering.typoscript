@@ -1,0 +1,30 @@
+page = PAGE
+page {
+    10 = CONTENT
+    10 {
+        table = tt_content
+        select {
+            orderBy = sorting
+            where = {#colPos}=0
+        }
+        # Render each content row through a CASE keyed on CType. Only the RSS
+        # plugin is needed here, dispatched to the Extbase plugin so the
+        # controller receives the tt_content record as currentContentObject.
+        renderObj = CASE
+        renderObj {
+            key.field = CType
+            mpcrss_feed = USER
+            mpcrss_feed {
+                userFunc = TYPO3\CMS\Extbase\Core\Bootstrap->run
+                extensionName = MpcRss
+                pluginName = Feed
+            }
+        }
+    }
+}
+
+plugin.tx_mpcrss.view {
+    templateRootPaths.10 = EXT:mpc_rss/Resources/Private/Templates/
+    partialRootPaths.10 = EXT:mpc_rss/Resources/Private/Partials/
+    layoutRootPaths.10 = EXT:mpc_rss/Resources/Private/Layouts/
+}
