@@ -36,6 +36,14 @@ final class FeedControllerTest extends FunctionalTestCase
         'SYS' => [
             'encryptionKey' => '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
         ],
+        // Let the pagination test pass the tx_mpcrss_feed[page] plugin argument
+        // without computing a cHash; an invalid/missing cHash then disables the
+        // page cache instead of returning a 404.
+        'FE' => [
+            'cacheHash' => [
+                'enforceValidation' => false,
+            ],
+        ],
     ];
 
     protected function setUp(): void
@@ -64,33 +72,65 @@ final class FeedControllerTest extends FunctionalTestCase
 
     private function renderHomePage(): string
     {
-        $response = $this->executeFrontendSubRequest((new InternalRequest())->withPageId(1));
+        return $this->renderHomePageWithPluginArguments([]);
+    }
+
+    /**
+     * @param array<string, int|string> $pluginArguments Extbase plugin arguments (tx_mpcrss_feed namespace)
+     */
+    private function renderHomePageWithPluginArguments(array $pluginArguments): string
+    {
+        $uri = 'http://localhost/';
+        if ($pluginArguments !== []) {
+            $uri .= '?' . http_build_query(['tx_mpcrss_feed' => $pluginArguments]);
+        }
+        $response = $this->executeFrontendSubRequest((new InternalRequest($uri))->withPageId(1));
 
         return (string)$response->getBody();
+    }
+
+    /**
+     * @param list<array<string, mixed>> $items
+     */
+    private function seedFeedCache(string $url, array $items): void
+    {
+        $this->get(CacheManager::class)->getCache('mpc_rss')->set(
+            'feed_' . md5($url),
+            $items,
+            ['mpc_rss'],
+            3600,
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $overrides
+     * @return array<string, mixed>
+     */
+    private static function makeItem(array $overrides = []): array
+    {
+        return $overrides + [
+            'title' => 'Item',
+            'description' => 'Description',
+            'link' => 'https://seeded.example/article',
+            'date' => '2026-06-20T10:00:00+00:00',
+            'categories' => ['Politik'],
+            'image' => '',
+            'authors' => [],
+            'source' => 'https://seeded.example/feed',
+            'sourceName' => 'Seeded Source',
+        ];
     }
 
     public function testRendersSeededFeedItems(): void
     {
         $this->importCSVDataSet(__DIR__ . '/../Fixtures/content_with_feed.csv');
 
-        $this->get(CacheManager::class)->getCache('mpc_rss')->set(
-            'feed_' . md5('https://seeded.example/feed'),
-            [
-                [
-                    'title' => 'Seeded Headline',
-                    'description' => 'Body text for the seeded item.',
-                    'link' => 'https://seeded.example/article',
-                    'date' => '2026-06-20T10:00:00+00:00',
-                    'categories' => ['Politik'],
-                    'image' => '',
-                    'authors' => [],
-                    'source' => 'https://seeded.example/feed',
-                    'sourceName' => 'Seeded Source',
-                ],
-            ],
-            ['mpc_rss'],
-            3600,
-        );
+        $this->seedFeedCache('https://seeded.example/feed', [
+            self::makeItem([
+                'title' => 'Seeded Headline',
+                'description' => 'Body text for the seeded item.',
+            ]),
+        ]);
 
         $html = $this->renderHomePage();
 
@@ -107,5 +147,75 @@ final class FeedControllerTest extends FunctionalTestCase
         $html = $this->renderHomePage();
 
         self::assertStringContainsString('No RSS feeds configured', $html);
+    }
+
+    public function testPaginatesItemsWithinTheActiveCategory(): void
+    {
+        $this->importCSVDataSet(__DIR__ . '/../Fixtures/content_paginate.csv');
+
+        // Five items in the same category; descending dates keep "Item 1" newest.
+        $items = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $items[] = self::makeItem([
+                'title' => 'Item ' . $i,
+                'link' => 'https://page.example/article/' . $i,
+                'date' => sprintf('2026-06-%02dT10:00:00+00:00', 20 - $i),
+                'source' => 'https://page.example/feed',
+                'sourceName' => 'Page Source',
+            ]);
+        }
+        $this->seedFeedCache('https://page.example/feed', $items);
+
+        // itemsPerPage = 2 -> page 2 holds the 3rd and 4th newest items.
+        $html = $this->renderHomePageWithPluginArguments(['page' => 2]);
+
+        self::assertStringContainsString('Item 3', $html);
+        self::assertStringContainsString('Item 4', $html);
+        self::assertStringNotContainsString('>Item 1<', $html);
+        self::assertStringNotContainsString('>Item 5<', $html);
+        self::assertStringContainsString('rss-pagination', $html);
+    }
+
+    public function testGroupsBySourceName(): void
+    {
+        $this->importCSVDataSet(__DIR__ . '/../Fixtures/content_source.csv');
+
+        $this->seedFeedCache('https://src.example/feed', [
+            self::makeItem([
+                'title' => 'Source Item',
+                'source' => 'https://src.example/feed',
+                'sourceName' => 'Source A',
+                'categories' => [],
+            ]),
+        ]);
+
+        $html = $this->renderHomePageWithPluginArguments([]);
+
+        // The source name becomes the group heading (and the active group).
+        self::assertStringContainsString('Source A', $html);
+        self::assertStringContainsString('Source Item', $html);
+    }
+
+    public function testGroupsByDateAndTranslatesGeneratedKeys(): void
+    {
+        $this->importCSVDataSet(__DIR__ . '/../Fixtures/content_date.csv');
+
+        // A "now" timestamp lands in the generated "Today" group, which the
+        // controller translates via LocalizationUtility.
+        $this->seedFeedCache('https://date.example/feed', [
+            self::makeItem([
+                'title' => 'Fresh Item',
+                'link' => 'https://date.example/article',
+                'date' => (new \DateTimeImmutable('now'))->format(\DateTimeInterface::ATOM),
+                'source' => 'https://date.example/feed',
+                'sourceName' => 'Date Source',
+                'categories' => [],
+            ]),
+        ]);
+
+        $html = $this->renderHomePageWithPluginArguments([]);
+
+        self::assertStringContainsString('Today', $html);
+        self::assertStringContainsString('Fresh Item', $html);
     }
 }

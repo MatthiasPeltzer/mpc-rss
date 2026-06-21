@@ -1,0 +1,6 @@
+"tt_content"
+,"uid","pid","CType","colPos","header","tx_mpcrss_grouping_mode"
+,50,1,"mpcrss_feed",0,"RSS Date","date"
+"tx_mpcrss_domain_model_feed"
+,"uid","pid","tt_content","title","feed_url","source_name","hidden","deleted"
+,1,1,50,"Date Feed","https://date.example/feed","Date Source",0,0
