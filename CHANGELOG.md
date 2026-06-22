@@ -5,9 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.2.4] - 2026-06-22
 
-_No unreleased changes._
+- Add Changelog
 
 ## [1.2.3] - 2026-06-21
 
@@ -107,7 +107,7 @@ _No unreleased changes._
 ### Added
 - Initial release: RSS feed content element with automatic feed updates via a scheduler task, documentation, license and extension icon.
 
-[Unreleased]: https://github.com/MatthiasPeltzer/mpc-rss/compare/v1.2.3...HEAD
+[1.2.4]: https://github.com/MatthiasPeltzer/mpc-rss/compare/v1.2.3...v1.2.4
 [1.2.3]: https://github.com/MatthiasPeltzer/mpc-rss/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/MatthiasPeltzer/mpc-rss/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/MatthiasPeltzer/mpc-rss/compare/v1.2.0...v1.2.1
