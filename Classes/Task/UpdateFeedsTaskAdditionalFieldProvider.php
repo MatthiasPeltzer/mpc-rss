@@ -31,7 +31,7 @@ final class UpdateFeedsTaskAdditionalFieldProvider extends AbstractAdditionalFie
 {
     /**
      * Gets additional fields to render in the form to add/edit a task
-     * 
+     *
      * @param array $taskInfo Values of the fields from the add/edit task form
      * @param AbstractTask|null $task The task object being edited. Null when adding a task!
      * @param SchedulerModuleController $schedulerModule Reference to the scheduler backend module
@@ -83,7 +83,7 @@ final class UpdateFeedsTaskAdditionalFieldProvider extends AbstractAdditionalFie
 
     /**
      * Validates the additional fields' values
-     * 
+     *
      * @param array $submittedData An array containing the data submitted by the add/edit task form
      * @param SchedulerModuleController $schedulerModule Reference to the scheduler backend module
      * @return bool True if validation was ok (or selected class is not relevant), false otherwise
@@ -101,7 +101,7 @@ final class UpdateFeedsTaskAdditionalFieldProvider extends AbstractAdditionalFie
 
     /**
      * Takes care of saving the additional fields' values
-     * 
+     *
      * @param array $submittedData An array containing the data submitted by the add/edit task form
      * @param AbstractTask $task Reference to the scheduler backend module
      */
@@ -113,4 +113,3 @@ final class UpdateFeedsTaskAdditionalFieldProvider extends AbstractAdditionalFie
         }
     }
 }
-

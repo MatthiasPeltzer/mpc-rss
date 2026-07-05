@@ -206,5 +206,3 @@ call_user_func(static function (): void {
     // Register icon for the CType in list view
     $GLOBALS['TCA']['tt_content']['ctrl']['typeicon_classes']['mpcrss_feed'] = 'mpc-rss-plugin';
 });
-
-

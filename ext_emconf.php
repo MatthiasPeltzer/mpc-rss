@@ -16,5 +16,3 @@ $EM_CONF['mpc_rss'] = [
         'suggests' => [],
     ],
 ];
-
-
