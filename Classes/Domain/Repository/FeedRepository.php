@@ -21,7 +21,7 @@ final class FeedRepository extends Repository
     }
 
     /**
-     * @return QueryResultInterface<Feed>
+     * @return QueryResultInterface<int, Feed>
      */
     public function findByContentElement(int $contentUid): QueryResultInterface
     {

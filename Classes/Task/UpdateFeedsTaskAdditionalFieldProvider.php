@@ -37,6 +37,10 @@ final class UpdateFeedsTaskAdditionalFieldProvider extends AbstractAdditionalFie
      * @param SchedulerModuleController $schedulerModule Reference to the scheduler backend module
      * @return array A two dimensional array, ['fieldName' => ['code' => 'HTML', 'label' => 'Label']]
      */
+    /**
+     * @param array<string, mixed> $taskInfo
+     * @return array<string, array{code: string, label: string, cshKey: string, cshLabel: string}>
+     */
     public function getAdditionalFields(array &$taskInfo, $task, SchedulerModuleController $schedulerModule): array
     {
         $additionalFields = [];
@@ -88,6 +92,9 @@ final class UpdateFeedsTaskAdditionalFieldProvider extends AbstractAdditionalFie
      * @param SchedulerModuleController $schedulerModule Reference to the scheduler backend module
      * @return bool True if validation was ok (or selected class is not relevant), false otherwise
      */
+    /**
+     * @param array<string, mixed> $submittedData
+     */
     public function validateAdditionalFields(array &$submittedData, SchedulerModuleController $schedulerModule): bool
     {
         // Validate cache lifetime - just ensure it's not negative
@@ -104,6 +111,9 @@ final class UpdateFeedsTaskAdditionalFieldProvider extends AbstractAdditionalFie
      *
      * @param array $submittedData An array containing the data submitted by the add/edit task form
      * @param AbstractTask $task Reference to the scheduler backend module
+     */
+    /**
+     * @param array<string, mixed> $submittedData
      */
     public function saveAdditionalFields(array $submittedData, AbstractTask $task): void
     {

@@ -25,7 +25,7 @@ final class FeedPreviewRenderer extends StandardContentPreviewRenderer
     public function renderPageModulePreviewContent(GridColumnItem $item): string
     {
         $recordOrObject = $item->getRecord();
-        $record = is_array($recordOrObject) ? $recordOrObject : $recordOrObject->toArray();
+        $record = $recordOrObject->toArray();
         $uid = (int)($record['uid'] ?? 0);
 
         if ($uid <= 0) {
@@ -69,7 +69,7 @@ final class FeedPreviewRenderer extends StandardContentPreviewRenderer
         $qb = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_mpcrss_domain_model_feed');
         $qb->getRestrictions()->removeAll();
 
-        return $qb
+        $rows = $qb
             ->select('title', 'feed_url', 'source_name', 'hidden')
             ->from('tx_mpcrss_domain_model_feed')
             ->where(
@@ -79,8 +79,23 @@ final class FeedPreviewRenderer extends StandardContentPreviewRenderer
             ->orderBy('sorting')
             ->executeQuery()
             ->fetchAllAssociative();
+
+        $feeds = [];
+        foreach ($rows as $row) {
+            $feeds[] = [
+                'title' => (string)($row['title'] ?? ''),
+                'feed_url' => (string)($row['feed_url'] ?? ''),
+                'source_name' => (string)($row['source_name'] ?? ''),
+                'hidden' => (int)($row['hidden'] ?? 0),
+            ];
+        }
+
+        return $feeds;
     }
 
+    /**
+     * @param list<array{title: string, feed_url: string, source_name: string, hidden: int}> $feeds
+     */
     private function renderFeedList(array $feeds): string
     {
         if ($feeds === []) {

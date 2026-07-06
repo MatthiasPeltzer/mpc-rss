@@ -85,11 +85,17 @@ final class FeedService implements LoggerAwareInterface
             $this->logger?->warning('Feed URL exceeds maximum allowed length', ['url' => substr($url, 0, 100) . '...']);
             return false;
         }
+        if (!$this->isAllowedFeedUrl($url)) {
+            $this->logger?->warning('Refusing to warm cache for a disallowed feed URL', ['url' => $url]);
+            return false;
+        }
         return $this->fetchFeedItems($url, $cacheLifetime, $sourceNames) !== null;
     }
 
     /**
      * @param list<string> $urls
+     * @param list<string> $includeCategories
+     * @param list<string> $excludeCategories
      * @param array<string, string> $sourceNames URL => source name mapping
      * @return array<string, list<array<string,mixed>>> group => items
      */
@@ -534,7 +540,12 @@ final class FeedService implements LoggerAwareInterface
             return $fallback;
         }
 
-        return $this->getXmlAttribute($linkElements[0], 'href');
+        $firstLink = $linkElements[0] ?? null;
+        if (!$firstLink instanceof \SimpleXMLElement) {
+            return '';
+        }
+
+        return $this->getXmlAttribute($firstLink, 'href');
     }
 
     /**
@@ -665,6 +676,10 @@ final class FeedService implements LoggerAwareInterface
         return $grouped;
     }
 
+    /**
+     * @param array<string, mixed> $a
+     * @param array<string, mixed> $b
+     */
     private static function dateDescComparator(array $a, array $b): int
     {
         return strcmp((string)($b['date'] ?? ''), (string)($a['date'] ?? ''));

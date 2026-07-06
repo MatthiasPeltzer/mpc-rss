@@ -43,6 +43,9 @@ final class FeedController extends ActionController
         return array_values(array_filter(array_map('trim', explode(',', $value))));
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     private function getSetting(array $data, string $tcaField, string $settingKey, mixed $default): mixed
     {
         return $data[$tcaField] ?? ($this->settings[$settingKey] ?? $default);
@@ -104,7 +107,7 @@ final class FeedController extends ActionController
         // is a false positive for an unrelated receiver.
         $currentContentObject = $this->request->getAttribute('currentContentObject');
         // @extensionScannerIgnoreLine
-        $data = $currentContentObject?->data ?? [];
+        $data = $currentContentObject !== null ? $currentContentObject->data : [];
         $contentUid = (int)($data['uid'] ?? 0);
 
         $maxItems = (int)$this->getSetting($data, 'tx_mpcrss_max_items', 'maxItems', 9);

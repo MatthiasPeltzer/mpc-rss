@@ -71,7 +71,7 @@ final class UpdateFeedsTask extends AbstractTask
     {
         $qb = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_mpcrss_domain_model_feed');
-        return $qb
+        $rows = $qb
             ->select('feed_url')
             ->addSelectLiteral(
                 'MAX(' . $qb->quoteIdentifier('source_name') . ') AS ' . $qb->quoteIdentifier('source_name')
@@ -85,6 +85,16 @@ final class UpdateFeedsTask extends AbstractTask
             ->groupBy('feed_url')
             ->executeQuery()
             ->fetchAllAssociative();
+
+        $records = [];
+        foreach ($rows as $row) {
+            $records[] = [
+                'feed_url' => (string)($row['feed_url'] ?? ''),
+                'source_name' => (string)($row['source_name'] ?? ''),
+            ];
+        }
+
+        return $records;
     }
 
     public function getAdditionalInformation(): string
