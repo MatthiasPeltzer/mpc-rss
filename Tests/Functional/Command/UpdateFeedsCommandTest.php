@@ -34,7 +34,7 @@ final class UpdateFeedsCommandTest extends FunctionalTestCase
     {
         $cache = $this->createMock(FrontendInterface::class);
         $cache->method('get')->willReturnCallback(
-            static fn(string $identifier): mixed => $valuesByIdentifier[$identifier] ?? false,
+            static fn (string $identifier): mixed => $valuesByIdentifier[$identifier] ?? false,
         );
 
         $service = (new \ReflectionClass(FeedService::class))->newInstanceWithoutConstructor();

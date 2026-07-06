@@ -50,7 +50,7 @@ final class FeedServiceTest extends TestCase
     {
         $cache = $this->createMock(FrontendInterface::class);
         $cache->method('get')->willReturnCallback(
-            static fn(string $identifier): mixed => $valuesByIdentifier[$identifier] ?? false,
+            static fn (string $identifier): mixed => $valuesByIdentifier[$identifier] ?? false,
         );
 
         (new \ReflectionProperty(FeedService::class, 'cache'))->setValue($this->subject, $cache);
@@ -269,9 +269,9 @@ final class FeedServiceTest extends TestCase
     }
 
     #[DataProvider('allowedFeedUrlProvider')]
-    public function testIsAllowedFeedUrl(string $url, bool $expected): void
+    public function testResolveValidatedIpsBlocksDisallowedUrls(string $url, bool $expected): void
     {
-        self::assertSame($expected, $this->invoke('isAllowedFeedUrl', $url));
+        self::assertSame($expected, $this->invoke('resolveValidatedIps', $url) !== null);
     }
 
     public function testParseXmlSafelyDoesNotResolveExternalEntities(): void
@@ -832,6 +832,14 @@ final class FeedServiceTest extends TestCase
     public function testWarmCacheReturnsTrueOnCacheHit(): void
     {
         $url = 'https://example.com/feed';
+        $this->injectCacheReturning([self::cacheId($url) => []]);
+
+        self::assertTrue($this->invoke('warmCache', $url, 3600, []));
+    }
+
+    public function testWarmCacheReturnsTrueOnCacheHitEvenWhenUrlWouldBeBlockedForFetch(): void
+    {
+        $url = 'http://127.0.0.1/feed';
         $this->injectCacheReturning([self::cacheId($url) => []]);
 
         self::assertTrue($this->invoke('warmCache', $url, 3600, []));

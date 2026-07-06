@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- `warmCache()` no longer rejects cached feeds when the URL fails SSRF DNS validation; validation applies only on cache misses.
+
+### Changed
+- Declare `extra.typo3/cms.Package.providesPackages` in `composer.json` for TYPO3 v14.3 metadata.
+- Switch PHP-CS-Fixer ruleset from `@PER-CS1.0` to `@PER-CS1x0` and exclude `node_modules` / vendor paths from CS scans.
+
 ## [1.2.4] - 2026-06-22
 
 - Add Changelog

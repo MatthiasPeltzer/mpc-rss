@@ -85,10 +85,10 @@ final class FeedService implements LoggerAwareInterface
             $this->logger?->warning('Feed URL exceeds maximum allowed length', ['url' => substr($url, 0, 100) . '...']);
             return false;
         }
-        if (!$this->isAllowedFeedUrl($url)) {
-            $this->logger?->warning('Refusing to warm cache for a disallowed feed URL', ['url' => $url]);
-            return false;
-        }
+
+        // SSRF validation is enforced in fetchFeedBody() on cache misses only. A
+        // cache hit must succeed even when the URL no longer resolves (e.g. after
+        // DNS changes) so scheduler/CLI warm-up does not spuriously fail.
         return $this->fetchFeedItems($url, $cacheLifetime, $sourceNames) !== null;
     }
 
@@ -321,18 +321,6 @@ final class FeedService implements LoggerAwareInterface
 
     /**
      * Guard against SSRF: only allow http(s) URLs that resolve to public IP addresses.
-     */
-    private function isAllowedFeedUrl(string $url): bool
-    {
-        return $this->resolveValidatedIps($url) !== null;
-    }
-
-    /**
-     * Validate a feed URL and return the public IP address(es) it resolves to, or
-     * null when the URL is disallowed (non-http(s) scheme, localhost, private /
-     * reserved range, or unresolvable). The returned IPs are used to pin the
-     * outgoing connection so the host cannot rebind to a private address between
-     * this check and the actual fetch.
      *
      * @return list<string>|null
      */
