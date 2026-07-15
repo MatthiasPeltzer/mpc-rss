@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.6] - 2026-07-15
+
+### Tests
+- Functional TCA bootstrap and showitem integrity tests for the feed plugin and `tx_mpcrss_domain_model_feed`.
+
 ## [1.2.5] - 2026-07-06
 
 ### Fixed
@@ -116,6 +121,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release: RSS feed content element with automatic feed updates via a scheduler task, documentation, license and extension icon.
 
+[1.2.6]: https://github.com/MatthiasPeltzer/mpc-rss/compare/v1.2.5...v1.2.6
 [1.2.5]: https://github.com/MatthiasPeltzer/mpc-rss/compare/v1.2.4...v1.2.5
 [1.2.4]: https://github.com/MatthiasPeltzer/mpc-rss/compare/v1.2.3...v1.2.4
 [1.2.3]: https://github.com/MatthiasPeltzer/mpc-rss/compare/v1.2.2...v1.2.3
