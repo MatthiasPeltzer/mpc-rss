@@ -7,3 +7,16 @@ parameters:
     paths:
         - Classes
     treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        # GridColumnItem::getRecord() returns a RecordInterface on TYPO3 14 but a
+        # plain array on TYPO3 13.4. The runtime guard handles both, so the
+        # is_array() certainty check is impossible/redundant depending on the
+        # TYPO3 version under analysis.
+        -
+            identifier: function.impossibleType
+            path: Classes/Preview/FeedPreviewRenderer.php
+            reportUnmatched: false
+        -
+            identifier: function.alreadyNarrowedType
+            path: Classes/Preview/FeedPreviewRenderer.php
+            reportUnmatched: false

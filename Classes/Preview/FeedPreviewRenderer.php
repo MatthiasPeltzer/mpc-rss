@@ -24,8 +24,9 @@ final class FeedPreviewRenderer extends StandardContentPreviewRenderer
 
     public function renderPageModulePreviewContent(GridColumnItem $item): string
     {
+        // TYPO3 14 returns a Record object (with toArray()); TYPO3 13.4 returns a plain array.
         $recordOrObject = $item->getRecord();
-        $record = $recordOrObject->toArray();
+        $record = is_array($recordOrObject) ? $recordOrObject : $recordOrObject->toArray();
         $uid = (int)($record['uid'] ?? 0);
 
         if ($uid <= 0) {
