@@ -12,3 +12,7 @@
 
 # Functional test instance build artifacts (typo3/testing-framework)
 /var/
+
+# Codeception generated output
+/Tests/Acceptance/_output/
+/Tests/Acceptance/Support/_generated/
