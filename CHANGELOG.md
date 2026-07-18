@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.7] - 2026-07-18
+
+### Tests
+- Align CI with mpc-vidply: Docker `runTests.sh` runner, Codeception backend acceptance smoke test, PHP/YAML/TypoScript linters, quality matrix (PHP × TYPO3 13/14), functional DB matrix, and acceptance Docker job.
+- Acceptance: add extension test that the MPC RSS Feed plugin appears in the new content element wizard.
+
+### Fixed
+- Codeception acceptance: set `support_namespace: Support`, add Docker `--network-alias chrome`, and pass `TYPO3_PATH_*` to the acceptance PHP stack only (not the Codeception bootstrap container).
+- Functional CI: require `typo3/testing-framework` ^9.3 for TYPO3 14; PostgreSQL CI uses `postgres` superuser; acceptance CI prefers Docker on GHA.
+- Backend feed preview: read the content element record as a `Record` (TYPO3 14) or array (TYPO3 13.4), fixing a fatal on 13.4 and the PHPStan `toArray()` error.
+
 ## [1.2.6] - 2026-07-15
 
 ### Tests
@@ -121,6 +132,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release: RSS feed content element with automatic feed updates via a scheduler task, documentation, license and extension icon.
 
+[1.2.7]: https://github.com/MatthiasPeltzer/mpc-rss/compare/v1.2.6...v1.2.7
 [1.2.6]: https://github.com/MatthiasPeltzer/mpc-rss/compare/v1.2.5...v1.2.6
 [1.2.5]: https://github.com/MatthiasPeltzer/mpc-rss/compare/v1.2.4...v1.2.5
 [1.2.4]: https://github.com/MatthiasPeltzer/mpc-rss/compare/v1.2.3...v1.2.4
