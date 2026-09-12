@@ -1,7 +1,7 @@
 <?php
 
 $EM_CONF['mpc_rss'] = [
-    'title' => 'MPC RSS',
+    'title' => 'MPC RSS Feeds',
     'description' => 'TYPO3 extension to fetch and render RSS feeds grouped by category, date or author.',
     'category' => 'plugin',
     'author' => 'Matthias Peltzer',

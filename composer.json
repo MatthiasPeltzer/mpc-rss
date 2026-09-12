@@ -1,5 +1,6 @@
 {
   "name": "mpc/mpc-rss",
+  "title": "MPC RSS Feeds",
   "description": "TYPO3 extension to fetch and render RSS feeds grouped by category, date or author.",
   "homepage": "https://github.com/MatthiasPeltzer/mpc-rss",
   "authors": [
