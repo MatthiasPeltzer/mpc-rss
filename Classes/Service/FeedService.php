@@ -192,7 +192,8 @@ final class FeedService implements LoggerAwareInterface
             }
 
             try {
-                $response = $this->requestFactory->request($currentUrl, 'GET', [
+                $curlResolve = $this->buildCurlResolveOption($currentUrl, $ips);
+                $requestOptions = [
                     'headers' => [
                         'User-Agent' => 'MPC RSS TYPO3',
                         'Accept' => 'application/rss+xml, application/atom+xml;q=0.95, application/xml;q=0.9, */*;q=0.8',
@@ -201,14 +202,19 @@ final class FeedService implements LoggerAwareInterface
                     'connect_timeout' => 6,
                     // Redirects are followed by hand below so each hop is re-validated and re-pinned.
                     'allow_redirects' => false,
-                    'stream' => true,
+                ];
+                if ($curlResolve !== []) {
                     // Pin the connection to the public IP(s) just validated. The Host
                     // header, TLS SNI and certificate verification still use the original
-                    // hostname, so only the resolution step is overridden. Honoured by the
-                    // cURL handler; on the (rare) stream fallback this is a no-op and the
-                    // per-hop validation above remains the active guard.
-                    'curl' => $this->buildCurlResolveOption($currentUrl, $ips),
-                ]);
+                    // hostname, so only the resolution step is overridden. Requires the
+                    // cURL handler: Guzzle 8 routes stream=true through StreamHandler,
+                    // which rejects curl options instead of ignoring them.
+                    $requestOptions['curl'] = $curlResolve;
+                } else {
+                    $requestOptions['stream'] = true;
+                }
+
+                $response = $this->requestFactory->request($currentUrl, 'GET', $requestOptions);
             } catch (\Throwable $exception) {
                 $this->logger?->warning('Fetching RSS feed failed', ['url' => $currentUrl, 'exception' => $exception]);
                 return null;
