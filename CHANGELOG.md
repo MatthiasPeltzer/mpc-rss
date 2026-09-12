@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.8] - 2026-09-12
+
+### Changed
+- Extension title set to **MPC RSS Feeds** in `composer.json` and `ext_emconf.php`.
+
 ## [1.2.7] - 2026-07-18
 
 ### Tests
@@ -132,6 +137,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release: RSS feed content element with automatic feed updates via a scheduler task, documentation, license and extension icon.
 
+[1.2.8]: https://github.com/MatthiasPeltzer/mpc-rss/compare/v1.2.7...v1.2.8
 [1.2.7]: https://github.com/MatthiasPeltzer/mpc-rss/compare/v1.2.6...v1.2.7
 [1.2.6]: https://github.com/MatthiasPeltzer/mpc-rss/compare/v1.2.5...v1.2.6
 [1.2.5]: https://github.com/MatthiasPeltzer/mpc-rss/compare/v1.2.4...v1.2.5
