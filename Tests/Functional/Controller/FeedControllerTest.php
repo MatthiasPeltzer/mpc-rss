@@ -258,4 +258,5 @@ final class FeedControllerTest extends FunctionalTestCase
         // getNavigationLabel() falls back to the generic "Filter" label.
         self::assertStringContainsString('Filter', $html);
     }
+
 }

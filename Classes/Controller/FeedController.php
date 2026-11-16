@@ -6,6 +6,7 @@ namespace Mpc\MpcRss\Controller;
 
 use Mpc\MpcRss\Domain\Repository\FeedRepository;
 use Mpc\MpcRss\Service\FeedService;
+use Mpc\MpcRss\Utility\ContentElementUidResolver;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -108,7 +109,7 @@ final class FeedController extends ActionController
         $currentContentObject = $this->request->getAttribute('currentContentObject');
         // @extensionScannerIgnoreLine
         $data = $currentContentObject !== null ? $currentContentObject->data : [];
-        $contentUid = (int)($data['uid'] ?? 0);
+        $contentUid = ContentElementUidResolver::resolve($data);
 
         $maxItems = (int)$this->getSetting($data, 'tx_mpcrss_max_items', 'maxItems', 9);
         $cacheLifetime = (int)$this->getSetting($data, 'tx_mpcrss_cache_lifetime', 'cacheLifetime', 1800);
