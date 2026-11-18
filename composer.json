@@ -1,85 +1,85 @@
 {
-  "name": "mpc/mpc-rss",
-  "title": "MPC RSS Feeds",
-  "description": "TYPO3 extension to fetch and render RSS feeds grouped by category, date or author.",
-  "homepage": "https://github.com/MatthiasPeltzer/mpc-rss",
-  "authors": [
-    {
-      "name": "Matthias Peltzer",
-      "email": "mail@mpeltzer.de",
-      "homepage": "https://www.mpeltzer.de/",
-      "role": "Developer"
-    }
-  ],
-  "type": "typo3-cms-extension",
-  "version": "1.2.9",
-  "license": ["GPL-2.0-or-later"],
-  "require": {
-    "php": "^8.2",
-    "typo3/cms-core": "^13.4 || ^14.3",
-    "typo3/cms-fluid": "^13.4 || ^14.3",
-    "typo3/cms-extbase": "^13.4 || ^14.3",
-    "typo3/html-sanitizer": "^2.3"
-  },
-  "autoload": {
-    "psr-4": {
-      "Mpc\\MpcRss\\": "Classes/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Mpc\\MpcRss\\Tests\\": "Tests/"
-    }
-  },
-  "require-dev": {
-    "codeception/codeception": "^5.2",
-    "codeception/module-asserts": "^3.0",
-    "codeception/module-cli": "^2.0",
-    "codeception/module-webdriver": "^4.0",
-    "phpstan/extension-installer": "^1.4",
-    "phpstan/phpstan": "^2.1",
-    "phpunit/phpunit": "^10.5 || ^11.5",
-    "saschaegerer/phpstan-typo3": "^3.0",
-    "typo3/coding-standards": "^0.8.0",
-    "typo3/cms-backend": "^13.4 || ^14.3",
-    "typo3/cms-install": "^13.4 || ^14.3",
-    "typo3/testing-framework": "^9.3",
-    "typo3/cms-scheduler": "^13.4 || ^14.3"
-  },
-  "config": {
-    "vendor-dir": ".Build/vendor",
-    "bin-dir": ".Build/bin",
-    "allow-plugins": {
-      "phpstan/extension-installer": true,
-      "typo3/class-alias-loader": true,
-      "typo3/cms-composer-installers": true
-    }
-  },
-  "scripts": {
-    "test:unit": "phpunit --colors=always -c phpunit.xml.dist",
-    "test:functional": "phpunit --colors=always -c Build/FunctionalTests.xml",
-    "test:coverage": "phpunit --colors=always -c phpunit.xml.dist --coverage-text --coverage-html .Build/coverage",
-    "test:acceptance": "codecept run -c codeception.yml --env headless",
-    "phpstan": "phpstan analyse -c phpstan.neon.dist --memory-limit=512M",
-    "cs": "php .Build/bin/php-cs-fixer fix --dry-run -v --config .php-cs-fixer.dist.php",
-    "cs:fix": "php .Build/bin/php-cs-fixer fix -v --config .php-cs-fixer.dist.php",
-    "lint:php": "find Classes Tests -name '*.php' -print0 | xargs -0 -n1 php -l",
-    "lint:yaml": "find Configuration -name '*.yaml' -o -name '*.yml' | xargs -r .Build/bin/yaml-lint --parse-tags",
-    "lint:typoscript": "php Build/Scripts/lintTypoScript.php",
-    "lint:all": [
-      "@lint:php",
-      "@lint:yaml",
-      "@lint:typoscript"
-    ]
-  },
-  "extra": {
-    "typo3/cms": {
-      "cms-package-dir": "{$vendor-dir}/typo3/cms",
-      "web-dir": ".Build/Public",
-      "extension-key": "mpc_rss",
-      "Package": {
-        "providesPackages": {}
-      }
-    }
-  }
+	"name": "mpc/mpc-rss",
+	"title": "MPC RSS Feeds",
+	"description": "TYPO3 extension to fetch and render RSS feeds grouped by category, date or author.",
+	"homepage": "https://github.com/MatthiasPeltzer/mpc-rss",
+	"authors": [
+		{
+			"name": "Matthias Peltzer",
+			"email": "mail@mpeltzer.de",
+			"homepage": "https://www.mpeltzer.de/",
+			"role": "Developer"
+		}
+	],
+	"type": "typo3-cms-extension",
+	"version": "1.2.10",
+	"license": ["GPL-2.0-or-later"],
+	"require": {
+		"php": "^8.2",
+		"typo3/cms-core": "^13.4 || ^14.3",
+		"typo3/cms-fluid": "^13.4 || ^14.3",
+		"typo3/cms-extbase": "^13.4 || ^14.3",
+		"typo3/html-sanitizer": "^2.3"
+	},
+	"autoload": {
+		"psr-4": {
+			"Mpc\\MpcRss\\": "Classes/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Mpc\\MpcRss\\Tests\\": "Tests/"
+		}
+	},
+	"require-dev": {
+		"codeception/codeception": "^5.2",
+		"codeception/module-asserts": "^3.0",
+		"codeception/module-cli": "^2.0",
+		"codeception/module-webdriver": "^4.0",
+		"phpstan/extension-installer": "^1.4",
+		"phpstan/phpstan": "^2.1",
+		"phpunit/phpunit": "^10.5 || ^11.5",
+		"saschaegerer/phpstan-typo3": "^3.0",
+		"typo3/coding-standards": "^0.8.0",
+		"typo3/cms-backend": "^13.4 || ^14.3",
+		"typo3/cms-install": "^13.4 || ^14.3",
+		"typo3/testing-framework": "^9.3",
+		"typo3/cms-scheduler": "^13.4 || ^14.3"
+	},
+	"config": {
+		"vendor-dir": ".Build/vendor",
+		"bin-dir": ".Build/bin",
+		"allow-plugins": {
+			"phpstan/extension-installer": true,
+			"typo3/class-alias-loader": true,
+			"typo3/cms-composer-installers": true
+		}
+	},
+	"scripts": {
+		"test:unit": "phpunit --colors=always -c phpunit.xml.dist",
+		"test:functional": "phpunit --colors=always -c Build/FunctionalTests.xml",
+		"test:coverage": "phpunit --colors=always -c phpunit.xml.dist --coverage-text --coverage-html .Build/coverage",
+		"test:acceptance": "codecept run -c codeception.yml --env headless",
+		"phpstan": "phpstan analyse -c phpstan.neon.dist --memory-limit=512M",
+		"cs": "php .Build/bin/php-cs-fixer fix --dry-run -v --config .php-cs-fixer.dist.php",
+		"cs:fix": "php .Build/bin/php-cs-fixer fix -v --config .php-cs-fixer.dist.php",
+		"lint:php": "find Classes Tests -name '*.php' -print0 | xargs -0 -n1 php -l",
+		"lint:yaml": "find Configuration -name '*.yaml' -o -name '*.yml' | xargs -r .Build/bin/yaml-lint --parse-tags",
+		"lint:typoscript": "php Build/Scripts/lintTypoScript.php",
+		"lint:all": [
+			"@lint:php",
+			"@lint:yaml",
+			"@lint:typoscript"
+		]
+	},
+	"extra": {
+		"typo3/cms": {
+			"cms-package-dir": "{$vendor-dir}/typo3/cms",
+			"web-dir": ".Build/Public",
+			"extension-key": "mpc_rss",
+			"Package": {
+				"providesPackages": {}
+			}
+		}
+	}
 }
